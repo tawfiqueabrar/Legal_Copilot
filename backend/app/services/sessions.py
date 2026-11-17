@@ -12,6 +12,9 @@ class Session:
     events: asyncio.Queue = field(default_factory=asyncio.Queue)
     result: dict | None = None
     running: bool = False
+    started: bool = False
+    analysis_done: bool = False
+    analysis_error: dict | None = None
     task: asyncio.Task | None = None
 
 
@@ -43,6 +46,7 @@ class SessionStore:
                     item.task.cancel()
                 item.content = b""
                 item.result = None
+                item.analysis_error = None
                 while not item.events.empty():
                     item.events.get_nowait()
             return item is not None
@@ -55,6 +59,7 @@ class SessionStore:
                     item.task.cancel()
                 item.content = b""
                 item.result = None
+                item.analysis_error = None
                 while not item.events.empty():
                     item.events.get_nowait()
                 self._items.pop(sid, None)

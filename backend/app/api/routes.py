@@ -31,28 +31,38 @@ async def _run(session):
         await session.events.put({"event": "progress", "data": {"stage": "extract", "message": "Document received in volatile session memory"}})
         result = await workflow.run({"session_id": session.id, "filename": session.filename, "mime_type": session.content_type, "document_text": parsed.text, "page_texts": parsed.page_texts, "parsed_document": parsed.model_dump(), "document_bytes": session.content, "event_queue": session.events, "progress": [], "errors": []})
         session.result = result.get("memo")
+        if session.result is None:
+            raise RuntimeError("Workflow completed without a memo")
         await session.events.put({"event": "result", "data": session.result or {"error": "Memo generation failed", "errors": result.get("errors", [])}})
     except Exception as exc:
-        await session.events.put({"event": "error", "data": {"message": "Analysis failed. Check service configuration and retry."}})
+        session.analysis_error = {"message": "Analysis failed. Check service configuration and retry."}
+        await session.events.put({"event": "error", "data": session.analysis_error})
     finally:
         session.running = False
+        session.analysis_done = True
         session.content = b""
         await session.events.put(None)
 
 
-@router.get("/analyze/{session_id}")
-async def analyze(session_id: str):
-    session = await store.get(session_id)
-    if not session:
-        raise HTTPException(404, "Session expired or not found.")
-    if not session.running and session.result is None:
+def _start_analysis(session):
+    if not session.started:
+        session.started = True
         session.running = True
         session.task = asyncio.create_task(_run(session))
 
+
+async def _session_stream(session):
     async def stream():
         if session.result is not None:
             yield f"event: result\ndata: {json.dumps(session.result)}\n\n"
             return
+        if session.analysis_done and session.analysis_error:
+            yield f"event: error\ndata: {json.dumps(session.analysis_error)}\n\n"
+            return
+        if session.analysis_done and session.result is None:
+            yield f"event: error\ndata: {json.dumps({'message': 'Analysis failed; no memo is available.'})}\n\n"
+            return
+        _start_analysis(session)
         while True:
             try:
                 item = await asyncio.wait_for(session.events.get(), timeout=15)
@@ -63,6 +73,14 @@ async def analyze(session_id: str):
                 break
             yield f"event: {item['event']}\ndata: {json.dumps(item['data'])}\n\n"
     return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@router.get("/analyze/{session_id}")
+async def analyze(session_id: str):
+    session = await store.get(session_id)
+    if not session:
+        raise HTTPException(404, "Session expired or not found.")
+    return await _session_stream(session)
 
 
 @router.get("/analyze")
