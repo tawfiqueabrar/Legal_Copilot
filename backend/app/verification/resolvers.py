@@ -104,6 +104,7 @@ class CourtListenerResolver:
 
 class StaticCorpusResolver:
     def __init__(self, path: str | Path | None = None):
+        # backend/data is the single corpus location used by both the fetch script and API.
         self.path = Path(path) if path else Path(__file__).resolve().parents[2] / "data" / "statutes.json"
 
     def _entries(self) -> dict[str, dict]:

@@ -21,6 +21,7 @@ _PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("eu_regulation", re.compile(r"\bRegulation\s*\(\s*EU\s*\)\s*\d{4}\s*/\s*\d{1,5}\b", re.I)),
     ("eu_directive", re.compile(r"\bDirective\s*(?:\(\s*EU\s*\)\s*)?\d{4}\s*/\s*\d{1,5}\b", re.I)),
     ("cal_code", re.compile(r"\bCal\.?\s+Bus(?:iness)?\.?\s*(?:&|and)\s*Prof(?:essions)?\.?\s+Code\s*§{1,2}\s*\d+(?:\.\d+)*(?:\s*\([^)]{1,20}\))*", re.I)),
+    ("cal_civ_code", re.compile(r"\bCal\.?\s+(?:Civ(?:il)?\.?\s+Code|Civ\.\s*Code)\s*§{1,2}\s*\d+(?:\.\d+)*(?:\s*\([^)]{1,20}\))*", re.I)),
 ]
 
 
@@ -54,6 +55,9 @@ def normalize_citation(raw: str, kind: str | None = None) -> str:
     if kind == "cal_code" or "BUS" in value.upper():
         m = re.search(r"§{1,2}\s*(\d+(?:\.\d+)*)", value)
         return f"CAL BUS. & PROF. CODE § {m.group(1)}" if m else value.casefold()
+    if kind == "cal_civ_code" or re.search(r"\bCIV(?:IL)?\.?\s+CODE\b", value, re.I):
+        m = re.search(r"§{1,2}\s*(\d+(?:\.\d+)*)", value)
+        return f"CAL CIV. CODE § {m.group(1)}" if m else value.casefold()
     return _canonical_spaces(value).casefold()
 
 

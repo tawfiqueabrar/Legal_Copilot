@@ -2,7 +2,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, ConfigDict
 
 
-CitationKind = Literal["us_case", "usc", "cfr", "eu_regulation", "eu_directive", "cal_code"]
+CitationKind = Literal["us_case", "usc", "cfr", "eu_regulation", "eu_directive", "cal_code", "cal_civ_code"]
 
 
 class Citation(BaseModel):
