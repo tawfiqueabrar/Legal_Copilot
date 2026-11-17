@@ -8,7 +8,9 @@ from app.api.routes import router, workflow
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
-    await workflow.search.close()
+    close = getattr(workflow.resolver, "close", None)
+    if close:
+        await close()
 
 
 app = FastAPI(title="Legal Copilot API", version="0.1.0", lifespan=lifespan)

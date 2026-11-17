@@ -25,6 +25,8 @@ async def verify_claim(claim: Claim, bank: AuthorityBank, contract_text: str, ch
     stray = [candidate.raw for candidate in raw_citations if candidate.normalized_key not in allowed_keys]
     if stray:
         return ClaimResult(claim_id=claim.claim_id, status="rejected", reasons=["Claim contains raw citation(s) outside its authority IDs: " + ", ".join(stray)])
+    if raw_citations:
+        return ClaimResult(claim_id=claim.claim_id, status="rejected", reasons=["Raw citation text is not allowed in memo claims; cite only closed-bank IDs such as [A1]."])
     if not span_in_text(claim.clause_quote, contract_text):
         return ClaimResult(claim_id=claim.claim_id, status="rejected", reasons=["Clause quote was not found verbatim in the contract."])
     authority_quotes = []
@@ -45,7 +47,7 @@ async def verify_claim(claim: Claim, bank: AuthorityBank, contract_text: str, ch
     supported = [(authority, verdict, quote) for authority, verdict, quote in verdicts if verdict.label == "supports" and quote]
     if supported:
         return ClaimResult(claim_id=claim.claim_id, status="verified", reasons=[v.rationale for _, v, _ in supported], authority_quotes=[quote for _, _, quote in supported])
-    if any(a.status == "existence-only" or not a.text for a in authorities):
+    if not any(a.text for a in authorities) and any(a.status == "existence-only" or not a.text for a in authorities):
         return ClaimResult(claim_id=claim.claim_id, status="existence_only", reasons=["Authority record exists, but source text or a grounded supporting passage is unavailable."], authority_quotes=authority_quotes)
     if authority_quotes:
         return ClaimResult(claim_id=claim.claim_id, status="unverified", reasons=["The checker did not find adequate support; quoted passages are grounded but may not support this claim."], authority_quotes=authority_quotes)

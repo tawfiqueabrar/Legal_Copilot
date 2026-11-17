@@ -50,6 +50,13 @@ def ingest_document(data: bytes, content_type: str, filename: str, *, ocr: Calla
         full_text = "\n\n".join(blocks)
         pages = [full_text]
         detected_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif content_type.startswith("image/"):
+        # Images are preserved in session memory and passed inline to Gemini's vision input.
+        Image.open(BytesIO(data)).verify()
+        full_text = ""
+        pages = []
+        warnings.append("Image will be analyzed inline by the multimodal triage model.")
+        detected_type = content_type
     elif content_type.startswith("text/") or suffix == ".txt":
         full_text = data.decode("utf-8-sig")
         pages = [full_text]

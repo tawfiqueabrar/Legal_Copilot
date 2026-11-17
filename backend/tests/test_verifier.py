@@ -9,7 +9,7 @@ def make_bank(text="The statute provides an action for damages.", status="resolv
 
 
 def claim(**overrides):
-    values = {"claim_id":"C1","text":"42 U.S.C. § 1983 provides a civil action.","authority_ids":["A1"],"clause_quote":"Provider shall protect all customer data."}
+    values = {"claim_id":"C1","text":"[A1] supports a civil action in this context.","authority_ids":["A1"],"clause_quote":"Provider shall protect all customer data."}
     values.update(overrides)
     return Claim(**values)
 
@@ -21,6 +21,11 @@ def test_rejects_authority_id_outside_closed_bank():
 
 def test_rejects_fabricated_raw_citation():
     result = run_inline(verify_claim(claim(text="42 U.S.C. § 1983 and 410 U.S. 113 support this."), make_bank(), "Provider shall protect all customer data.", lambda *_: {}))
+    assert result.status == "rejected"
+
+
+def test_mapped_raw_citation_is_still_rejected_in_memo_copy():
+    result = run_inline(verify_claim(claim(text="42 U.S.C. § 1983 applies."), make_bank(), "Provider shall protect all customer data.", lambda *_: None))
     assert result.status == "rejected"
 
 

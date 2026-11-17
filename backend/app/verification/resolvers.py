@@ -57,6 +57,31 @@ class CourtListenerResolver:
         except Exception:
             return None
 
+    async def search_query(self, query: str) -> list[Authority]:
+        """Run a short citation-focused opinion search and return real record metadata."""
+        try:
+            headers = {"Authorization": f"Token {self.token}"} if self.token else {}
+            response = await self._send("get", f"{self.API}/search/", params={"q": query, "type": "o", "page_size": 5}, headers=headers)
+            response.raise_for_status()
+            rows = response.json().get("results", [])
+            authorities = []
+            for row in rows:
+                title = row.get("caseName") or row.get("case_name") or "CourtListener result"
+                citation_values = row.get("citation") or []
+                citation_values = citation_values if isinstance(citation_values, list) else [str(citation_values)]
+                raw_citation = next((value for value in citation_values if value), "")
+                case_key = normalize_citation(raw_citation, "us_case") if raw_citation else f"case:{row.get('cluster_id') or row.get('id') or title}"
+                url = row.get("absolute_url") or row.get("url") or "https://www.courtlistener.com"
+                if url.startswith("/"):
+                    url = "https://www.courtlistener.com" + url
+                clusters = row.get("sub_opinions") or row.get("opinions") or []
+                opinion_text = await self._opinion_text({"sub_opinions": clusters}, headers)
+                authorities.append(Authority(id="A1", key=case_key, kind="us_case", title=title, source="courtlistener",
+                                             url=url, text=opinion_text, status="resolved" if opinion_text else "existence-only"))
+            return authorities
+        except Exception:
+            return []
+
     async def _opinion_text(self, cluster: dict, headers: dict) -> str | None:
         sub_opinions = cluster.get("sub_opinions") or cluster.get("opinions") or []
         for opinion in sub_opinions[:3]:
@@ -100,6 +125,19 @@ class StaticCorpusResolver:
                          url=entry.get("url", ""), text=text, retrieved_at=retrieved,
                          status="resolved" if resolved else "existence-only")
 
+    async def search_query(self, query: str) -> list[Authority]:
+        found = []
+        lowered = query.casefold()
+        for key, entry in self._entries().items():
+            aliases = entry.get("aliases", [])
+            if any(alias.casefold() in lowered for alias in aliases):
+                found.append(Authority(id="A1", key=key, kind=entry.get("kind", "usc"),
+                                       title=entry.get("title", key), source=entry.get("source", "static-corpus"),
+                                       url=entry.get("url", ""), text=entry.get("text") or None,
+                                       retrieved_at=entry.get("retrieved_at") or None,
+                                       status="resolved" if entry.get("text") and entry.get("retrieved_at") else "existence-only"))
+        return found
+
 
 class CompositeResolver:
     def __init__(self, resolvers: list[Resolver]):
@@ -114,6 +152,25 @@ class CompositeResolver:
             except Exception:
                 continue
         return None
+
+    async def search_query(self, query: str) -> list[Authority]:
+        found = []
+        for resolver in self.resolvers:
+            method = getattr(resolver, "search_query", None)
+            if method:
+                try:
+                    found.extend(await method(query))
+                except Exception:
+                    continue
+        return found
+
+    async def close(self):
+        for resolver in self.resolvers:
+            close = getattr(resolver, "close", None)
+            if close:
+                result = close()
+                if hasattr(result, "__await__"):
+                    await result
 
 
 async def build_bank(citations: list[Citation | CitationCandidate], resolver: Resolver):
