@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from app.config import settings
 from app.services.sessions import SessionStore
-from app.services.extract import extract_document
+from app.ingestion import ingest_document
 from app.agents.workflow import LegalWorkflow
 
 router = APIRouter(prefix="/api")
@@ -13,7 +13,7 @@ workflow = LegalWorkflow()
 
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
-    allowed = {"application/pdf", "image/png", "image/jpeg", "image/tiff", "text/plain"}
+    allowed = {"application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/png", "image/jpeg", "image/tiff", "text/plain"}
     if file.content_type not in allowed:
         raise HTTPException(415, "Upload a PDF, PNG, JPEG, TIFF, or text file.")
     data = await file.read(settings.max_upload_bytes + 1)
@@ -27,9 +27,9 @@ async def upload(file: UploadFile = File(...)):
 
 async def _run(session):
     try:
-        text, pages = await asyncio.to_thread(extract_document, session.content, session.content_type, session.filename)
+        parsed = await asyncio.to_thread(ingest_document, session.content, session.content_type, session.filename)
         await session.events.put({"event": "progress", "data": {"stage": "extract", "message": "Document received in volatile session memory"}})
-        result = await workflow.run({"session_id": session.id, "filename": session.filename, "mime_type": session.content_type, "document_text": text, "page_texts": pages, "document_bytes": session.content, "event_queue": session.events, "progress": [], "errors": []})
+        result = await workflow.run({"session_id": session.id, "filename": session.filename, "mime_type": session.content_type, "document_text": parsed.text, "page_texts": parsed.page_texts, "parsed_document": parsed.model_dump(), "document_bytes": session.content, "event_queue": session.events, "progress": [], "errors": []})
         session.result = result.get("memo")
         await session.events.put({"event": "result", "data": session.result or {"error": "Memo generation failed", "errors": result.get("errors", [])}})
     except Exception as exc:

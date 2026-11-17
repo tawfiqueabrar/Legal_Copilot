@@ -12,6 +12,7 @@ from app.services.retrieval import embed_and_rerank
 class GraphState(TypedDict, total=False):
     session_id: str; document_text: str; page_texts: list[str]; mime_type: str; filename: str; document_bytes: bytes
     event_queue: Any
+    parsed_document: dict
     document: dict; risks: list[dict]; citations: list[dict]; memo: dict
     iteration: int; errors: list[str]; progress: list[dict]
 

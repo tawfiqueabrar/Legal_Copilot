@@ -2,6 +2,9 @@ backend/.env
 backend/.venv/
 backend/__pycache__/
 backend/**/*.pyc
+backend/**/*.egg-info/
+backend/.pytest_cache/
+backend/**/__pycache__/
 frontend/.env.local
 frontend/node_modules/
 frontend/.next/
