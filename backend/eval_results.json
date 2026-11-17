@@ -1,0 +1,48 @@
+{
+  "run_mode": "offline",
+  "demo_file": "demo/sample_msa.txt",
+  "matching_rule": "A planted risk matches a reported risk only when at least one referenced clause contains an expected section number and an exact quote contains the planted quote anchor (whitespace/case/smart-quote normalization only). Cross-clause recall additionally requires at least two distinct referenced clause IDs.",
+  "risk_recall": {
+    "value": null,
+    "status": "not run: GEMINI_API_KEY missing",
+    "metric": "matched planted risks / total planted risks"
+  },
+  "cross_clause_recall": {
+    "value": null,
+    "status": "not run: GEMINI_API_KEY missing",
+    "metric": "matched planted cross-clause risks / total planted cross-clause risks"
+  },
+  "quote_grounding_rate": {
+    "value": null,
+    "status": "not run: GEMINI_API_KEY missing",
+    "metric": "reported risk quotes present in source / reported risk quotes"
+  },
+  "citation_precision": {
+    "value": null,
+    "status": "BLOCKED: statute text not loaded",
+    "metric": "eligible cited authorities resolving to authority-bank entries / eligible cited authorities"
+  },
+  "claim_verification_rate": {
+    "value": null,
+    "status": "BLOCKED: statute text not loaded",
+    "metric": "verified claims / claims"
+  },
+  "required_statute_text": {
+    "CAL BUS. & PROF. CODE § 16600": "BLOCKED: statute text not loaded",
+    "CAL CIV. CODE § 1798.100": "BLOCKED: statute text not loaded"
+  },
+  "cal_bpc_16600_support_check": {
+    "value": null,
+    "status": "BLOCKED: statute text not loaded",
+    "metric": "independent support check against loaded statute text"
+  },
+  "cal_civ_1798_100_support_check": {
+    "value": null,
+    "status": "BLOCKED: statute text not loaded",
+    "metric": "independent support check against loaded statute text"
+  },
+  "fabrication_test": {
+    "status": "passed",
+    "result_status": "rejected"
+  }
+}
