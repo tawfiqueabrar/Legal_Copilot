@@ -9,3 +9,4 @@ def test_session_routes_are_registered():
     assert "get" in paths["/sessions/{session_id}/memo.docx"]
     assert "get" in paths["/sessions/{session_id}/memo.pdf"]
     assert "delete" in paths["/sessions/{session_id}"]
+    assert "post" in paths["/verify"]

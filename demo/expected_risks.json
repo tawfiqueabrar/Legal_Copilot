@@ -1,0 +1,13 @@
+{
+  "minimum_risk_count": 5,
+  "planted_risks": [
+    {"id":"unlimited_indemnity_bypass","title":"Indemnity carve-out defeats the liability cap","cross_clause":true,"sections":["9.3","9.4"],"quote":"either party's indemnification obligations"},
+    {"id":"broad_customer_data_definition","title":"Customer Data definition silently broadens processing scope","cross_clause":true,"sections":["1.1","7.1"],"quote":"any information derived, inferred, or generated"},
+    {"id":"renewal_and_termination_asymmetry","title":"Renewal window combines with asymmetric termination rights","cross_clause":true,"sections":["5.2","5.3"],"quote":"at least ninety days before the end"},
+    {"id":"unilateral_policy_change","title":"Supplier can amend policies by posting them","cross_clause":false,"sections":["2.2"],"quote":"Continued use after the posting date constitutes acceptance"},
+    {"id":"delayed_incident_notice","title":"Incident notice may arrive thirty days after confirmation","cross_clause":false,"sections":["7.3"],"quote":"within thirty days after confirming the incident"},
+    {"id":"ip_assignment_overreach","title":"Assignment language sweeps in feedback and deliverables","cross_clause":true,"sections":["1.1","8.2"],"quote":"all rights in feedback, suggestions, configurations, and materials"},
+    {"id":"audit_rights_limited","title":"Audit right excludes key security evidence","cross_clause":false,"sections":["11.2"],"quote":"may not access information about other customers, source code, or Supplier's internal security controls"},
+    {"id":"law_and_data_scope_conflict","title":"Choice of law does not resolve mandatory data-law obligations","cross_clause":true,"sections":["7.1","12.1","13.4"],"quote":"each party is responsible for determining which laws apply"}
+  ]
+}

@@ -50,6 +50,7 @@ class DraftMemo(BaseModel):
 
 class MemoRisk(RiskFinding):
     authority_ids: list[str] = Field(default_factory=list)
+    pages: list[int] = Field(default_factory=list)
 
 
 class FinalMemo(BaseModel):
@@ -57,6 +58,7 @@ class FinalMemo(BaseModel):
     title: str = "Legal Memorandum"
     executive_summary: str
     risks: list[MemoRisk] = Field(default_factory=list)
+    clauses: list[dict] = Field(default_factory=list)
     claims: list[MemoClaim] = Field(default_factory=list)
     authority_bank: list[Authority] = Field(default_factory=list)
     coverage_gaps: list[str] = Field(default_factory=list)

@@ -284,11 +284,16 @@ class LegalWorkflow:
         jurisdiction = JurisdictionFinding.model_validate(state.get("jurisdiction", {}))
         if jurisdiction.gap:
             coverage.append(jurisdiction.gap)
-        risks = [MemoRisk.model_validate(item) for item in state.get("risks", [])]
+        clause_by_id = {item["id"]: item for item in state.get("clauses", [])}
+        risks = []
+        for item in state.get("risks", []):
+            pages = sorted({clause_by_id[clause_id]["page"] for clause_id in item.get("clause_ids", []) if clause_id in clause_by_id and clause_by_id[clause_id].get("page")})
+            risks.append(MemoRisk.model_validate({**item, "pages": pages}))
         memo = FinalMemo(
             title=draft.title,
             executive_summary=draft.executive_summary,
             risks=risks,
+            clauses=state.get("clauses", []),
             claims=claims,
             authority_bank=[Authority.model_validate(item) for item in state.get("authority_bank", [])],
             coverage_gaps=list(dict.fromkeys(coverage)),

@@ -1,0 +1,143 @@
+MASTER SERVICES AGREEMENT
+
+Effective Date: 1 January 2026
+
+This Master Services Agreement (Agreement) is entered into by Northstar Retail Group, Inc., a Delaware corporation with offices in San Francisco, California (Customer), and Meridian Cloud Operations, Ltd., a company organized in England and Wales with offices in London, United Kingdom (Supplier). The parties agree that this Agreement governs all services ordered under a Statement of Work (SOW). If a SOW conflicts with this Agreement, the SOW controls only when it identifies the specific section being changed and is signed by both parties.
+
+[Page 1]
+
+1. DEFINITIONS
+
+1.1 Affiliate means an entity that controls, is controlled by, or is under common control with a party. Customer Data means all information submitted by or for Customer, its Affiliates, their employees, customers, vendors, and end users, including Personal Data, transaction records, support requests, telemetry, and any information derived, inferred, or generated from those materials. Deliverables means reports, configurations, documentation, and other work product expressly listed as a deliverable in a SOW. Supplier Materials means Supplier's software, methods, templates, tools, know-how, and improvements, whether created before or during a service.
+
+1.2 Personal Data means information relating to an identified or identifiable natural person. Security Incident means an actual or reasonably suspected unauthorized access to, acquisition of, disclosure of, loss of, or material alteration of Customer Data. Fees means the recurring service fees paid or payable in the twelve months before the event giving rise to liability, excluding implementation charges, credits, taxes, and pass-through expenses.
+
+[Page 2]
+
+2. SERVICES AND CHANGE CONTROL
+
+2.1 Supplier will provide the hosted analytics platform and support described in each SOW. Supplier may use subcontractors to perform any part of the Services and remains responsible for their performance. Customer will provide reasonable cooperation and access to systems identified in the SOW.
+
+2.2 Supplier may revise the Services, documentation, security controls, or service policies at any time by posting an updated version to its customer portal. Continued use after the posting date constitutes acceptance of the update. Supplier will use reasonable efforts to give advance notice of changes that materially reduce core functionality, but a change to a policy or security control does not require a signed SOW.
+
+2.3 A party requesting a material scope change will submit a written change request. Supplier may begin work on a change request before the parties sign it if Customer's project contact approves the request by email. Fees and schedules for that work will be determined by Supplier's then-current rates.
+
+[Page 3]
+
+3. CUSTOMER RESPONSIBILITIES
+
+3.1 Customer is responsible for the accuracy, quality, and legality of Customer Data and for obtaining any notices, permissions, and consents required for Supplier's use of Customer Data to provide the Services. Customer will not submit payment card security codes or government-issued identification numbers unless the SOW expressly permits it.
+
+3.2 Customer will maintain current contact information and designate an administrator for account access. Customer is responsible for activity performed through its credentials unless the activity results from Supplier's failure to maintain the access controls required by the Security Schedule.
+
+3.3 Customer will notify Supplier of any use that Customer believes violates this Agreement. Supplier may suspend access immediately if it reasonably believes that continued access creates a security threat or violates applicable law. Supplier will provide notice where legally permitted and will restore access once the stated threat has been addressed.
+
+[Page 4]
+
+4. FEES AND PAYMENT
+
+4.1 Customer will pay the fees in each SOW within thirty days after invoice. Undisputed overdue amounts accrue interest at the lower of one percent per month or the maximum rate permitted by law. Customer must submit a good-faith invoice dispute within fifteen days after receipt and pay all undisputed amounts when due.
+
+4.2 Fees are exclusive of transaction taxes, duties, and similar government charges. Customer will pay such charges except taxes based on Supplier's net income, property, or employees. If Customer is required to withhold taxes, the parties will cooperate to minimize the withholding and Customer will provide official receipts.
+
+4.3 Supplier may increase recurring fees at renewal by up to eight percent on thirty days' notice. If Customer objects, Customer may terminate only the affected SOW by giving written notice within ten days after receiving the increase notice; termination will take effect at the end of the current term.
+
+[Page 5]
+
+5. TERM AND RENEWAL
+
+5.1 This Agreement begins on the Effective Date and continues until terminated under this section. Each SOW has an initial term stated in that SOW and then renews for successive one-year terms.
+
+5.2 This Agreement renews automatically for successive one-year terms unless Customer gives written non-renewal notice at least ninety days before the end of the then-current term. Supplier may elect not to renew by giving Customer thirty days' notice. Any renewal fee change under Section 4.3 applies at the start of the renewal term.
+
+5.3 A party may terminate this Agreement for the other party's material breach if the breach remains uncured for thirty days after written notice. Supplier may suspend or terminate access immediately if Customer breaches any use restriction, fails to pay an invoice when due, or creates a security risk. Supplier may terminate this Agreement for convenience on thirty days' notice.
+
+[Page 6]
+
+6. CONFIDENTIALITY
+
+6.1 Confidential Information includes business, technical, security, financial, and customer information disclosed by or for a party that is marked confidential or reasonably should be understood to be confidential. The receiving party will use Confidential Information only to perform or receive the Services and will protect it using at least reasonable care.
+
+6.2 Confidential Information does not include information the receiving party can show was public without breach, already known without a duty of confidentiality, independently developed without use of the information, or rightfully received from a third party. Supplier may use aggregated service statistics and generalized learnings for product development, benchmarking, and marketing, provided the information does not identify Customer by name.
+
+6.3 A receiving party may disclose Confidential Information to its personnel and professional advisers who need to know it and are bound by confidentiality duties. The receiving party may disclose information when required by law after giving advance notice where legally permitted.
+
+[Page 7]
+
+7. DATA PROCESSING AND SECURITY
+
+7.1 Supplier will process Customer Data to provide, maintain, support, and secure the Services. Supplier may also use Customer Data to develop, test, and improve its products if the data is aggregated or de-identified. Supplier will determine the technical means for such processing.
+
+7.2 Supplier will maintain commercially reasonable administrative, physical, and technical safeguards consistent with its then-current security program. Supplier may change its controls from time to time if it determines that the change does not materially reduce its overall security posture. Customer may request Supplier's current security summary once per year, subject to confidentiality obligations.
+
+7.3 Supplier will notify Customer of a Security Incident without undue delay and in any event within thirty days after confirming the incident. Supplier will provide information reasonably available to it and cooperate with Customer's investigation. Supplier may charge its then-current rates for assistance beyond its standard incident response.
+
+[Page 8]
+
+8. INTELLECTUAL PROPERTY
+
+8.1 Each party retains all right, title, and interest in its technology and materials that it owned or developed outside this Agreement. Supplier grants Customer a non-exclusive, non-transferable license to use the Services and Deliverables for Customer's internal business purposes during the applicable SOW term.
+
+8.2 Customer hereby assigns to Supplier all rights in feedback, suggestions, configurations, and materials created in connection with the Services, including any Deliverables identified in a SOW. Supplier grants Customer a perpetual, worldwide, royalty-free license to use Deliverables solely for Customer's internal operations. Supplier Materials embedded in a Deliverable remain Supplier's property.
+
+8.3 Customer will not reverse engineer, decompile, or attempt to derive source code from the Services, except to the limited extent such restriction is prohibited by applicable law. Supplier may use subcontractors and open-source components in the Services subject to their applicable terms.
+
+[Page 9]
+
+9. INDEMNIFICATION AND LIABILITY
+
+9.1 Supplier will defend Customer against a third-party claim that the unmodified Services infringe a United States patent, copyright, or trademark and will pay damages finally awarded or settlements approved by Supplier. Customer will defend Supplier against a third-party claim arising from Customer Data or Customer's use of the Services in violation of this Agreement.
+
+9.2 The indemnified party will give prompt notice, provide reasonable assistance at the indemnifying party's expense, and allow the indemnifying party to control the defense and settlement. A settlement may not impose an admission of fault or ongoing obligation on the indemnified party without its written consent.
+
+9.3 To the maximum extent permitted by law, each party's aggregate liability arising out of or related to this Agreement will not exceed the Fees paid or payable in the twelve months before the event giving rise to the claim. Neither party will be liable for indirect, incidental, special, punitive, or consequential damages or for lost profits, revenues, goodwill, or data.
+
+9.4 The exclusions and cap in Section 9.3 do not apply to Customer's payment obligations, either party's confidentiality breach, either party's indemnification obligations, or Customer's misuse of Supplier Materials. The parties agree that these carve-outs apply regardless of whether the liability is characterized as direct, indirect, contract, tort, or otherwise.
+
+[Page 10]
+
+10. WARRANTIES AND DISCLAIMER
+
+10.1 Each party represents that it has authority to enter into this Agreement. Supplier warrants that it will provide the Services in a professional manner substantially consistent with the applicable SOW. Customer's exclusive remedy for breach of this warranty is re-performance or, if Supplier cannot re-perform, termination of the affected SOW and a pro-rata refund of prepaid unused fees.
+
+10.2 Except as expressly stated, the Services and all related materials are provided as available. Supplier disclaims implied warranties of merchantability, fitness for a particular purpose, title, and non-infringement to the maximum extent permitted by law. Supplier does not warrant uninterrupted or error-free operation or that the Services will identify every security threat or compliance issue.
+
+10.3 Customer is responsible for evaluating outputs and making decisions based on them. Supplier does not provide legal, tax, or regulatory advice through the Services.
+
+[Page 11]
+
+11. AUDIT, RECORDS, AND INSURANCE
+
+11.1 Supplier will maintain records reasonably necessary to demonstrate its performance of the Services for one year after the applicable SOW ends. Supplier may delete or overwrite records according to its retention policy unless required by law to retain them.
+
+11.2 Customer may audit Supplier's compliance with this Agreement once per year on at least thirty days' notice, during normal business hours, through an independent auditor acceptable to Supplier. The auditor must sign Supplier's confidentiality agreement. An audit may not access information about other customers, source code, or Supplier's internal security controls. Supplier may satisfy an audit request with a questionnaire or third-party report.
+
+11.3 Supplier will maintain commercially reasonable insurance coverage during the term. Upon request, Supplier will provide a certificate of insurance, but Customer has no right to require additional insured status or specific coverage limits unless stated in a SOW.
+
+[Page 12]
+
+12. GOVERNING LAW AND DISPUTES
+
+12.1 This Agreement and any dispute arising from it are governed by the laws of the State of Delaware, without regard to conflict-of-law rules. The United Nations Convention on Contracts for the International Sale of Goods does not apply.
+
+12.2 The state and federal courts located in Wilmington, Delaware have exclusive jurisdiction over disputes arising under this Agreement, and each party consents to personal jurisdiction there. Either party may seek emergency injunctive relief in any court with jurisdiction.
+
+12.3 The parties will first attempt in good faith to resolve a dispute through executive escalation. If unresolved after thirty days, either party may bring an action in the courts identified above. Each party waives any right to participate in a class or representative action to the extent permitted by law.
+
+[Page 13]
+
+13. GENERAL TERMS
+
+13.1 Neither party may assign this Agreement without the other party's consent, except that Supplier may assign it to an Affiliate or in connection with a merger, reorganization, or sale of substantially all of its assets. Customer may not assign an SOW without Supplier's consent. Any permitted successor is bound by this Agreement.
+
+13.2 Notices must be sent by personal delivery, recognized overnight courier, or email to the addresses listed in the signature block. Email notice is effective when sent if the sender does not receive an automated delivery failure. A party may update its address by notice.
+
+13.3 This Agreement, its SOWs, and the Security Schedule are the entire agreement and supersede prior discussions on the subject. If a provision is unenforceable, the remaining provisions remain effective. A waiver must be in writing and applies only to the specific instance.
+
+13.4 This Agreement may be signed in counterparts and electronically. The parties will comply with applicable laws in performing their obligations, but each party is responsible for determining which laws apply to its own activities and data.
+
+CUSTOMER: Northstar Retail Group, Inc.             SUPPLIER: Meridian Cloud Operations, Ltd.
+By: __________________________                     By: __________________________
+Name: ________________________                     Name: ________________________
+Title: _________________________                     Title: _________________________
+Date: _________________________                     Date: _________________________
