@@ -1,7 +1,21 @@
 from collections.abc import Callable
+import re
+from app.config import MIN_SUPPORT_QUOTE_CHARS
 from .bank import AuthorityBank
 from .extract import extract_citations, span_in_text
 from .models import Claim, ClaimResult, SupportVerdict
+
+
+def _is_operative_support_quote(quote: str) -> bool:
+    """Require a substantial, grounded sentence, while excluding heading-only snippets."""
+    normalized = " ".join(quote.split())
+    if len(normalized) < MIN_SUPPORT_QUOTE_CHARS:
+        return False
+    if not re.search(r"[.!?][\"')\]]*$", normalized):
+        return False
+    if re.fullmatch(r"(?i)(?:article|art\.?|section|sec\.?|§)\s*[\d.()\-a-z]+(?:\s+[\w ,&()/-]+)?", normalized):
+        return False
+    return True
 
 
 async def _invoke_checker(checker: Callable, claim: Claim, title: str, text: str) -> SupportVerdict:
@@ -31,6 +45,7 @@ async def verify_claim(claim: Claim, bank: AuthorityBank, contract_text: str, ch
         return ClaimResult(claim_id=claim.claim_id, status="rejected", reasons=["Clause quote was not found verbatim in the contract."])
     authority_quotes = []
     verdicts = []
+    rejected_support_quotes = False
     for authority in authorities:
         if not authority.text:
             continue
@@ -41,14 +56,20 @@ async def verify_claim(claim: Claim, bank: AuthorityBank, contract_text: str, ch
         quote = verdict.authority_quote
         if quote and not span_in_text(quote, authority.text):
             quote = ""
-        if quote:
+        quote_is_operative = bool(quote and _is_operative_support_quote(quote))
+        if quote and not quote_is_operative:
+            rejected_support_quotes = True
+            quote = ""
+        if quote_is_operative:
             authority_quotes.append(quote)
-        verdicts.append((authority, verdict, quote))
-    supported = [(authority, verdict, quote) for authority, verdict, quote in verdicts if verdict.label == "supports" and quote]
+        verdicts.append((authority, verdict, quote, quote_is_operative))
+    supported = [(authority, verdict, quote) for authority, verdict, quote, operative in verdicts if verdict.label == "supports" and quote and operative]
     if supported:
         return ClaimResult(claim_id=claim.claim_id, status="verified", reasons=[v.rationale for _, v, _ in supported], authority_quotes=[quote for _, _, quote in supported])
     if not any(a.text for a in authorities) and any(a.status == "existence-only" or not a.text for a in authorities):
         return ClaimResult(claim_id=claim.claim_id, status="existence_only", reasons=["Authority record exists, but source text or a grounded supporting passage is unavailable."], authority_quotes=authority_quotes)
+    if rejected_support_quotes:
+        return ClaimResult(claim_id=claim.claim_id, status="unverified", reasons=[f"The checker quotation was shorter than {MIN_SUPPORT_QUOTE_CHARS} characters, lacked sentence-ending punctuation, or was heading-only; support was not verified."], authority_quotes=authority_quotes)
     if authority_quotes:
         return ClaimResult(claim_id=claim.claim_id, status="unverified", reasons=["The checker did not find adequate support; quoted passages are grounded but may not support this claim."], authority_quotes=authority_quotes)
     return ClaimResult(claim_id=claim.claim_id, status="unverified", reasons=["No independently grounded supporting passage was returned."])

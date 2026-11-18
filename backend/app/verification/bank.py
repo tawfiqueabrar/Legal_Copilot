@@ -46,7 +46,8 @@ class AuthorityBank:
         lines = ["AUTHORITY BANK (closed set; cite only these IDs):"]
         for authority in self._by_id.values():
             basis = "source text available" if authority.text else "existence only; no source text available"
-            lines.append(f"[{authority.id}] {authority.title} | {authority.key} | {authority.url} | {basis}")
+            locator = f" | {authority.chunk_locator}" if authority.chunk_locator else ""
+            lines.append(f"[{authority.id}] {authority.title} | {authority.key}{locator} | {authority.url} | {basis}")
             if authority.text:
                 lines.append(authority.text)
         return "\n".join(lines)

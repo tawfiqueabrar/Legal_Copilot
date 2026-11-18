@@ -18,6 +18,11 @@ _PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("us_case", re.compile(r"\b\d{1,4}\s+F\.?\s*(?:2d|3d|4th|Supp\.?\s*(?:2d|3d)?|App['’]?x)\s+\d{1,5}\b", re.I)),
     ("usc", re.compile(r"\b\d{1,3}\s+U\.?\s*S\.?\s*C\.?\s*§{1,2}\s*\d+[A-Za-z0-9.-]*(?:\s*\([^)]{1,20}\))*", re.I)),
     ("cfr", re.compile(r"\b\d{1,3}\s+C\.?\s*F\.?\s*R\.?\s*§{1,2}\s*\d+(?:\.\d+)*(?:\s*\([^)]{1,20}\))*", re.I)),
+    ("eu_articles_pair", re.compile(r"\bArticles\s+(\d{1,3})\s+and\s+(\d{1,3})\b", re.I)),
+    ("eu_regulation", re.compile(r"\bRegulation\s*\(\s*EU\s*\)\s*\d{4}\s*/\s*\d{1,5}\s*,?\s*Articles?\s+\d{1,3}\b", re.I)),
+    ("eu_regulation", re.compile(r"\bGDPR\s+Art\.?\s*\d{1,3}\b", re.I)),
+    ("eu_regulation", re.compile(r"\bGDPR\s+Articles?\s+\d{1,3}\b", re.I)),
+    ("eu_regulation", re.compile(r"\bArticles?\s+\d{1,3}\s+GDPR\b", re.I)),
     ("eu_regulation", re.compile(r"\bRegulation\s*\(\s*EU\s*\)\s*\d{4}\s*/\s*\d{1,5}\b", re.I)),
     ("eu_directive", re.compile(r"\bDirective\s*(?:\(\s*EU\s*\)\s*)?\d{4}\s*/\s*\d{1,5}\b", re.I)),
     ("cal_code", re.compile(r"\bCal\.?\s+Bus(?:iness)?\.?\s*(?:&|and)\s*Prof(?:essions)?\.?\s+Code\s*§{1,2}\s*\d+(?:\.\d+)*(?:\s*\([^)]{1,20}\))*", re.I)),
@@ -47,6 +52,13 @@ def normalize_citation(raw: str, kind: str | None = None) -> str:
         m = re.search(r"(\d+)\s+C\.?\s*F\.?\s*R\.?\s*§{1,2}\s*(\d+(?:\.\d+)*)", value, re.I)
         return f"{m.group(1)} C.F.R. § {m.group(2)}" if m else value.casefold()
     if kind == "eu_regulation":
+        article = re.search(r"\bArticles?\s+(\d{1,3})\b", value, re.I)
+        if not article:
+            article = re.search(r"\bGDPR\s+Art(?:icle)?\.?\s*(\d{1,3})\b", value, re.I)
+        if not article:
+            article = re.search(r"\bArt(?:icle)?\.?\s*(\d{1,3})\s+GDPR\b", value, re.I)
+        if article:
+            return f"EU REGULATION 2016/679 ART. {article.group(1)}"
         m = re.search(r"(\d{4})\s*/\s*(\d+)", value)
         return f"EU REGULATION {m.group(1)}/{m.group(2)}" if m else value.casefold()
     if kind == "eu_directive":
@@ -68,8 +80,20 @@ def extract_citations(text: str) -> list[CitationCandidate]:
         for match in pattern.finditer(text):
             if any(match.start() < end and match.end() > start for start, end in occupied):
                 continue
+            if kind == "eu_articles_pair":
+                raw = match.group(0)
+                for group in (1, 2):
+                    article_number = match.group(group)
+                    found.append(CitationCandidate(
+                        "eu_regulation", raw,
+                        f"EU REGULATION 2016/679 ART. {article_number}",
+                        match.start(group), match.end(group),
+                    ))
+                occupied.append((match.start(), match.end()))
+                continue
             raw = match.group(0)
-            found.append(CitationCandidate(kind, raw, normalize_citation(raw, kind), match.start(), match.end()))
+            normalized_kind = "eu_regulation" if kind == "eu_articles_pair" else kind
+            found.append(CitationCandidate(normalized_kind, raw, normalize_citation(raw, normalized_kind), match.start(), match.end()))
             occupied.append((match.start(), match.end()))
     return sorted(found, key=lambda item: (item.start, item.end))
 

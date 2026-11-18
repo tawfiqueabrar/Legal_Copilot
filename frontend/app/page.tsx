@@ -36,9 +36,23 @@ type Risk = {
   suggested_mitigation_clause: string;
   authority_ids: string[];
   pages: number[];
+  contract_evidence: Array<{ clause_id: string; section: string; quote: string }>;
+  why_may_matter: string;
+  legal_references: Array<{ authority_id: string; status: Status; support_quotes: string[] }>;
+  citation_status: Status;
+  applicability_note: string;
+  citation_check_line: string;
+  source_not_loaded: boolean;
 };
+type LegalSource = { authority_id: string; title: string; source: string; url: string; retrieved_at?: string | null };
+type NotAssessed = { name: string; note: string };
+type EvidenceGap = { marker: string; clause_ids: string[]; affected_risk_ids: string[]; note: string };
 type Memo = {
   title: string;
+  document_name: string;
+  assessment_line: string;
+  legal_sources_in_scope: LegalSource[];
+  not_assessed: NotAssessed[];
   executive_summary: string;
   risks: Risk[];
   clauses: Clause[];
@@ -46,8 +60,10 @@ type Memo = {
   authority_bank: Authority[];
   coverage_gaps: string[];
   removed_claims: Array<{ claim_id: string; status: Status; reasons: string[] }>;
+  evidence_gaps: EvidenceGap[];
   methodology: string;
   notice: string;
+  footer: string;
 };
 type AgentStep = { id: string; label: string; status: "waiting" | "running" | "done" | "failed"; summary?: string };
 type CitationProbe = { citation: string; normalized_key?: string | null; result: { status: Status; reasons: string[]; authority_quotes: string[] }; authority?: Authority | null };
@@ -55,10 +71,14 @@ type CitationProbe = { citation: string; normalized_key?: string | null; result:
 const INITIAL_STEPS: AgentStep[] = [
   { id: "ingest", label: "Ingest document", status: "waiting" },
   { id: "segment", label: "Segment clauses", status: "waiting" },
-  { id: "risk", label: "Risk analysis", status: "waiting" },
-  { id: "bank", label: "Build authority bank", status: "waiting" },
+  { id: "detect_jurisdiction", label: "Detect jurisdiction", status: "waiting" },
+  { id: "checklist_scan", label: "Checklist risk scan", status: "waiting" },
+  { id: "cross_clause_scan", label: "Cross-clause scan", status: "waiting" },
+  { id: "research", label: "Research authorities", status: "waiting" },
+  { id: "build_bank", label: "Build authority bank", status: "waiting" },
+  { id: "draft_memo", label: "Draft memorandum", status: "waiting" },
   { id: "verify", label: "Independent support check", status: "waiting" },
-  { id: "memo", label: "Assemble memorandum", status: "waiting" },
+  { id: "finalize", label: "Finalize report", status: "waiting" },
 ];
 
 const STATUS_LABEL: Record<Status, string> = {
@@ -85,8 +105,28 @@ function StatusBadge({ status }: { status: Status }) {
 
 function apiError(detail: unknown, fallback: string) {
   if (typeof detail === "string" && detail.trim()) return detail;
-  if (detail && typeof detail === "object" && "detail" in detail && typeof (detail as { detail?: unknown }).detail === "string") {
-    return (detail as { detail: string }).detail;
+  const payload = detail && typeof detail === "object" && "detail" in detail
+    ? (detail as { detail?: unknown }).detail
+    : detail;
+  if (payload && typeof payload === "object") {
+    const error = payload as { category?: unknown; exception_class?: unknown; http_status?: unknown; message?: unknown };
+    const labels: Record<string, string> = {
+      key_invalid: "Gemini key invalid",
+      key_invalid_or_access_denied: "Gemini key invalid or access denied",
+      model_not_found: "Gemini model not found",
+      overloaded: "Gemini overloaded",
+      rate_limited: "Gemini rate limited",
+      timeout: "Gemini request timed out",
+      provider_error: "Gemini unavailable",
+    };
+    if (typeof error.category === "string") {
+      const label = labels[error.category] || `Gemini unavailable (${error.category})`;
+      const exceptionClass = typeof error.exception_class === "string" ? error.exception_class : "UnknownException";
+      const status = typeof error.http_status === "number" ? `HTTP ${error.http_status}` : "HTTP status unavailable";
+      const message = typeof error.message === "string" && error.message.trim() ? error.message : "No provider message was supplied.";
+      return `${label} · ${exceptionClass} · ${status} · ${message}`;
+    }
+    if (typeof error.message === "string" && error.message.trim()) return error.message;
   }
   return fallback;
 }
@@ -107,15 +147,6 @@ function renderAuthorityMarkers(text: string, authorities: Authority[]) {
     if (!match || !known.has(match[1])) return <span key={index}>{part}</span>;
     return <a className="font-semibold text-emerald-800 underline decoration-emerald-300 underline-offset-2" href={`#authority-${match[1]}`} key={index}>{part}</a>;
   });
-}
-
-function stepForNode(node: string): string {
-  if (node === "ingest") return "ingest";
-  if (node === "segment" || node === "detect_jurisdiction") return "segment";
-  if (node.includes("scan")) return "risk";
-  if (node === "research" || node === "build_bank") return "bank";
-  if (node === "verify") return "verify";
-  return "memo";
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -239,9 +270,9 @@ export default function Home() {
   };
 
   const setStepProgress = (node: string, summary: string) => {
-    const current = stepForNode(node);
     setSteps((previous) => {
-      const currentIndex = previous.findIndex((item) => item.id === current);
+      const currentIndex = previous.findIndex((item) => item.id === node);
+      if (currentIndex < 0) return previous;
       return previous.map((item, index) => ({
         ...item,
         status: index < currentIndex ? "done" : index === currentIndex ? "running" : item.status,
@@ -502,18 +533,33 @@ export default function Home() {
                 <section>
                   <SectionLabel>Legal memorandum</SectionLabel>
                   <h1 className="mt-2 text-2xl font-bold">{memo.title}</h1>
+                  <p className="mt-1 text-sm text-slate-600">Document name: {memo.document_name || "Unavailable"}</p>
+                  <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm font-semibold text-amber-950">{memo.assessment_line}</p>
                   <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-700">{renderAuthorityMarkers(memo.executive_summary, authorities)}</p>
+                </section>
+
+                <section>
+                  <SectionLabel>Legal sources in scope</SectionLabel>
+                  {memo.legal_sources_in_scope.length ? <ul className="mt-2 space-y-2">{memo.legal_sources_in_scope.map((source) => {
+                    const href = safeHttpsUrl(source.url);
+                    return <li className="rounded-lg border border-slate-200 p-3 text-xs" key={source.authority_id}><p className="font-semibold">[{source.authority_id}] {source.title}</p><p className="mt-1 text-slate-500">{source.source} · Retrieved: {source.retrieved_at || "Unavailable"}</p>{href ? <a className="mt-1 inline-block break-all text-emerald-800 underline" href={href} rel="noreferrer" target="_blank">{source.url}</a> : <p className="mt-1 break-all">{source.url || "Source URL unavailable"}</p>}</li>;
+                  })}</ul> : <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">No non-empty authority source text was loaded.</p>}
+                </section>
+
+                <section>
+                  <SectionLabel>Not assessed</SectionLabel>
+                  {memo.not_assessed.length ? <ul className="mt-2 space-y-2">{memo.not_assessed.map((item, index) => <li className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm" key={`${item.name}-${index}`}><p className="font-semibold text-amber-950">{item.name}</p><p className="mt-1 text-xs leading-5 text-amber-900">{item.note}</p></li>)}</ul> : <p className="mt-2 text-sm text-slate-600">No additional unassessed jurisdiction or regime was identified.</p>}
                 </section>
 
                 <section>
                   <div className="flex items-center justify-between"><SectionLabel>Risk findings</SectionLabel><span className="text-xs text-slate-500">{memo.risks.length} quote-grounded</span></div>
                   {memo.risks.length ? memo.risks.map((risk) => <article className="mt-3 rounded-xl border border-slate-200 p-4" key={risk.risk_id}>
                     <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="font-bold">{risk.title}</h3><span className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-orange-950">{risk.severity}</span></div>
-                    <p className="mt-2 text-xs font-semibold text-slate-600">Clauses: {risk.clause_ids.map((id) => { const clause = clauses.find((item) => item.id === id); return <button className="mr-1 underline underline-offset-2" key={id} onClick={() => jumpToClause(id)} type="button">{clause?.heading || id}</button>; })}</p>
-                    {risk.exact_quotes.map((quote, index) => <blockquote className="mt-3 whitespace-pre-wrap border-l-4 border-emerald-700 bg-emerald-50/70 px-3 py-2 text-sm leading-6 text-slate-800" key={`${risk.risk_id}-${index}`}>{quote}</blockquote>)}
-                    <p className="mt-3 text-sm leading-6 text-slate-700">{risk.why_non_obvious}</p>
-                    <p className="mt-2 text-xs leading-5 text-slate-500">Jurisdiction: {risk.jurisdiction_assumption}</p>
-                    <div className="mt-3 rounded-lg bg-slate-50 p-3"><p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Suggested mitigation</p><p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{risk.suggested_mitigation_clause}</p></div>
+                    {risk.contract_evidence.map((evidence, index) => <div className="mt-3" key={`${risk.risk_id}-evidence-${index}`}><p className="text-xs font-semibold text-slate-600">Section <button className="underline underline-offset-2" onClick={() => jumpToClause(evidence.clause_id)} type="button">{evidence.section}</button></p><blockquote className="mt-1 whitespace-pre-wrap border-l-4 border-emerald-700 bg-emerald-50/70 px-3 py-2 text-sm leading-6 text-slate-800">{evidence.quote}</blockquote></div>)}
+                    <div className="mt-3"><p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Why this may matter</p><p className="mt-1 text-sm leading-6 text-slate-700">{risk.why_may_matter}</p></div>
+                    <div className="mt-3"><p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Legal reference</p>{risk.source_not_loaded && <p className="mt-1 text-sm font-semibold text-amber-900">Source not loaded. No legal proposition is cited or paraphrased from an unavailable source.</p>}{risk.legal_references.map((reference) => <div className="mt-2 rounded-lg border border-slate-200 p-3" key={reference.authority_id}><p className="text-sm font-semibold"><a className="text-emerald-800 underline" href={`#authority-${reference.authority_id}`}>[{reference.authority_id}]</a> <StatusBadge status={reference.status} /></p>{reference.support_quotes.length ? reference.support_quotes.map((quote, index) => <blockquote className="mt-2 whitespace-pre-wrap border-l-2 border-slate-400 pl-3 text-xs leading-5 text-slate-700" key={index}>{quote}</blockquote>) : <p className="mt-2 text-xs text-slate-500">No support-check quote was returned.</p>}</div>)}</div>
+                    <div className="mt-3 rounded-lg bg-slate-50 p-3"><p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Suggested action</p><p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{risk.suggested_mitigation_clause}</p></div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2"><StatusBadge status={risk.citation_status} /><p className="text-xs font-medium text-slate-600">{risk.citation_check_line}</p></div>
                   </article>) : <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">No quote-grounded risk findings were returned.</p>}
                 </section>
 
@@ -545,8 +591,9 @@ export default function Home() {
 
                 {memo.coverage_gaps.length > 0 && <section><SectionLabel>Coverage gaps</SectionLabel><ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-600">{memo.coverage_gaps.map((gap, index) => <li key={index}>{gap}</li>)}</ul></section>}
                 {memo.removed_claims.length > 0 && <section><SectionLabel>Removed for failed verification</SectionLabel><ul className="mt-2 space-y-2">{memo.removed_claims.map((claim) => <li className="flex items-center justify-between gap-3 rounded border border-rose-200 bg-rose-50 p-2 text-sm" key={claim.claim_id}><span>{claim.claim_id}: {claim.reasons.join(" ")}</span><StatusBadge status={claim.status} /></li>)}</ul></section>}
+                <section><SectionLabel>Evidence gaps</SectionLabel>{memo.evidence_gaps.length ? <ul className="mt-2 space-y-2">{memo.evidence_gaps.map((gap, index) => <li className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm" key={`${gap.marker}-${index}`}><p className="font-semibold">{gap.marker} · {gap.clause_ids.length ? gap.clause_ids.join(", ") : "document-level"}</p><p className="mt-1 text-xs leading-5">{gap.note}</p><p className="mt-1 text-xs">Affected findings: {gap.affected_risk_ids.length ? gap.affected_risk_ids.join(", ") : "not linked to a specific finding"}</p></li>)}</ul> : <p className="mt-2 text-sm text-slate-600">No redaction, missing-content, or truncation markers were detected.</p>}</section>
                 <CitationCheckPanel value={verifyInput} setValue={setVerifyInput} onSubmit={testCitation} loading={verifyLoading} error={verifyError} probe={probe} />
-                <section className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-950">{memo.notice || "Not legal advice. Consult qualified counsel."}</section>
+                <section className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-950">{memo.notice || "Not legal advice. Consult qualified counsel."}<p className="mt-2 font-normal">{memo.footer}</p></section>
               </> : <div className="grid min-h-60 place-items-center text-center text-sm text-slate-500">{working ? "Waiting for the first agent event…" : "The memorandum is unavailable until analysis completes."}</div>}
             </div>
           </section>

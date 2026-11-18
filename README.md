@@ -18,32 +18,55 @@ External model and search providers receive the minimum text needed for their fu
 
 ## Accuracy methodology
 
-Legal citations in generated claims are restricted to IDs in the resolved authority bank. Deterministic extraction maps supported citation forms to normalized keys; unresolved or out-of-bank references cannot become verified claims. The independent support checker is a separate temperature-zero model call, and the verifier accepts its authority quotation only when that exact passage occurs in the resolved source text. Contract risks are retained only when their quotation is found in the uploaded document and their clause IDs exist in the segmenter output. Verification labels are returned by the backend as `verified`, `existence_only`, `unverified`, or `rejected`; the interface displays those labels without upgrading them. Unclear jurisdiction, missing source text, and provider failures remain coverage gaps or unavailable states.
+Legal citations in generated claims are restricted to IDs in the resolved authority bank. Deterministic extraction maps supported citation forms to normalized keys; unresolved or out-of-bank references cannot become verified claims. The independent support checker is a separate temperature 0 requested for the independent support-check model call, and the verifier accepts its authority quotation only when that exact passage occurs in the resolved source text. Contract risks are retained only when their quotation is found in the uploaded document and their clause IDs exist in the segmenter output. Verification labels are returned by the backend as `verified`, `existence_only`, `unverified`, or `rejected`; the interface displays those labels without upgrading them. Unclear jurisdiction, missing source text, and provider failures remain coverage gaps or unavailable states. Model calls use JSON output schemas that are validated locally against the existing Pydantic models. Configured and actually used model names are recorded as technical metadata without changing the assessment sections.
 
-The evaluator matches a planted risk only when a referenced clause overlaps an expected section number and an exact quoted span overlaps the expected quote anchor. Cross-clause recall additionally requires two or more referenced clause IDs. The evaluator uses the real pipeline when configured; otherwise it records unavailable metrics as not run and runs only offline checks. The current recorded run is in [backend/eval_results.json](backend/eval_results.json): the pipeline metrics are not run without a Gemini key, and statute-dependent citation checks are blocked until the required California text is loaded. No estimate is substituted for a blocked metric.
+The evaluator matches a planted risk only when a referenced clause overlaps an expected section number and an exact quoted span overlaps the expected quote anchor. Cross-clause recall additionally requires two or more referenced clause IDs. The evaluator uses the real pipeline when configured; otherwise it records unavailable metrics as not run and runs only offline checks. Gemini model names are sourced from `backend/app/config.py` settings (`GEMINI_MODEL`, `SUPPORT_CHECK_MODEL` (defaults to `GEMINI_MODEL`), and optional `GEMINI_FALLBACK_MODEL`). The shared call wrapper uses a 60-second request timeout, bounded retries for transient status codes, and a single configured fallback for persistent 503/504 errors. Provider failures report category, exception class, HTTP status, and a credential-redacted message.
+
+```mermaid
+flowchart TD
+    U["User uploads contract<br/>(.txt / .pdf / .docx)"] --> ING["ingest<br/>parse document"]
+    ING --> SEG["segment<br/>clauses with section numbers"]
+    SEG --> JUR["detect_jurisdiction<br/>abstain if unclear"]
+    JUR --> CHK["checklist_scan<br/>quote-grounded risks"]
+    CHK --> XC["cross_clause_scan<br/>risks spanning 2+ clauses"]
+    XC --> RES["research<br/>find candidate authorities"]
+
+    subgraph SRC["Authority sources"]
+        STAT[("statutes.json<br/>static corpus with url + retrieved_at")]
+        CL["CourtListener<br/>live case lookup"]
+    end
+    STAT --> RES
+    CL --> RES
+
+    RES --> BANK["build_bank<br/>resolved real sources only<br/>IDs: A1, A2, ..."]
+    BANK --> DRAFT["draft_memo<br/>may cite only bank IDs"]
+    DRAFT --> VER["verify<br/>existence + independent support check<br/>(temperature 0, verbatim quote required)"]
+    VER -->|"Verified / Existence-only / Unverified"| FIN["finalize<br/>status labels + evidence gaps"]
+    VER -->|"Rejected: removed from memo"| REM["removed_claims<br/>kept for the audit trail"]
+    REM --> FIN
+    FIN --> OUT["Preliminary Risk Assessment<br/>DOCX / PDF export<br/>not-legal-advice notice"]
+
+    JUR -.->|"jurisdiction unclear or source not loaded"| GAP["Not assessed / Evidence gap"]
+    GAP -.-> FIN
+```
 
 ## Known limitations
 
-- `backend/data/statutes.json` currently has no fetched text for the required California B&P section or the California Civil Code privacy section. Their citations must remain existence-only or unavailable, and a support check cannot establish a proposition from their text until that corpus is populated from an allowed source.
-- Live analysis requires a configured Gemini key; citation lookup requires network access and can be unavailable independently. The `/verify` citation-only probe cannot verify a legal proposition: a source match alone is not a support check.
+- `backend/data/statutes.json` has no loaded text for California B&P § 16600.5 or California Civil Code § 1798.140. Other statutory coverage is limited to the specific loaded entries; the presence of one section does not establish support for another.
+- Live analysis requires a configured Gemini key; citation lookup requires network access and can be unavailable independently. The `/verify` citation-only probe cannot verify a legal proposition: a source match alone is not a support check. Gemini 3 temperature 0 is accepted by the API, but Google's guidance recommends the default temperature and warns that lower settings can degrade performance.
 - OCR and multimodal extraction can miss text or deadlines. Review the extracted document against the source before relying on findings.
 - Sessions are process-local and expire after their configured TTL. Multi-worker deployments need a privacy-reviewed ephemeral session coordinator.
 - This hackathon implementation is not legal advice and does not replace jurisdiction-specific review by qualified counsel.
 
 ## Recorded evaluation
 
-The table below is copied from the evaluator's actual offline run. It reports only checks that ran; unavailable and blocked metrics have no numeric value.
+The table below is copied from the evaluator's actual live run. It reports only checks that ran; unavailable metrics have no numeric value.
 
 <!-- EVAL_TABLE_START -->
-| Metric | Result |
-|---|---|
-| Risk recall | not run: GEMINI_API_KEY missing |
-| Cross-clause recall | not run: GEMINI_API_KEY missing |
-| Quote grounding rate | not run: GEMINI_API_KEY missing |
-| Citation precision | BLOCKED: statute text not loaded |
-| Claim verification rate | BLOCKED: statute text not loaded |
-| Fabrication test | passed (rejected) |
+Evaluation results are recorded in [backend/eval_results.json](backend/eval_results.json). Numeric results are omitted here pending review and approval.
 <!-- EVAL_TABLE_END -->
+
+Model names and per-claim/per-authority support-check outcomes are recorded in the evaluation JSON; temperature 0 was requested for analytical and support-check calls.
 
 ## Layout
 

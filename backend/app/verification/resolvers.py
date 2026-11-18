@@ -103,9 +103,10 @@ class CourtListenerResolver:
 
 
 class StaticCorpusResolver:
-    def __init__(self, path: str | Path | None = None):
+    def __init__(self, path: str | Path | None = None, tags_path: str | Path | None = None):
         # backend/data is the single corpus location used by both the fetch script and API.
         self.path = Path(path) if path else Path(__file__).resolve().parents[2] / "data" / "statutes.json"
+        self.tags_path = Path(tags_path) if tags_path else self.path.with_name("statute_tags.json")
 
     def _entries(self) -> dict[str, dict]:
         if not self.path.exists():
@@ -114,8 +115,42 @@ class StaticCorpusResolver:
             data = json.load(handle)
         return data if isinstance(data, dict) else {}
 
+    def article_section_entries(self) -> list[dict]:
+        """Return only loaded statute records scoped to an article or numbered section."""
+        import re
+        tags = {}
+        if self.tags_path.exists():
+            with self.tags_path.open("r", encoding="utf-8") as handle:
+                loaded_tags = json.load(handle)
+            if isinstance(loaded_tags, dict):
+                tags = loaded_tags
+        rows = []
+        for key, entry in self._entries().items():
+            if not str(entry.get("text") or "").strip() or not str(entry.get("url") or "").strip():
+                continue
+            if not re.search(r"\bART\.\s*\d+\b|§\s*\d+[\d.]*", key, re.I):
+                continue
+            rows.append({"key": key, **entry, **tags.get(key, {})})
+        return rows
+
     async def resolve(self, citation: Citation) -> Authority | None:
-        entry = self._entries().get(citation.normalized_key)
+        entries = self._entries()
+        article_specific = citation.normalized_key.startswith("EU REGULATION 2016/679 ART. ")
+        if article_specific:
+            # Article citations never fall back to the combined regulation entry.
+            entry = entries.get(citation.normalized_key)
+        elif citation.kind == "eu_regulation" and citation.normalized_key == "EU REGULATION 2016/679":
+            entry = entries.get(citation.normalized_key)
+            if not entry:
+                return None
+            return Authority(
+                id="A1", key=citation.normalized_key, kind=citation.kind,
+                title=entry.get("title") or citation.raw, source=entry.get("source", "static-corpus"),
+                url=entry.get("url", ""), text=None,
+                retrieved_at=entry.get("retrieved_at") or None, status="existence-only",
+            )
+        else:
+            entry = entries.get(citation.normalized_key)
         if not entry:
             return None
         text = entry.get("text") or None
@@ -132,11 +167,15 @@ class StaticCorpusResolver:
         for key, entry in self._entries().items():
             aliases = entry.get("aliases", [])
             if any(alias.casefold() in lowered for alias in aliases):
+                whole_regulation_key = key == "EU REGULATION 2016/679"
+                text = entry.get("text") or None
+                if whole_regulation_key:
+                    text = None  # Never send combined regulation text to the support checker.
                 found.append(Authority(id="A1", key=key, kind=entry.get("kind", "usc"),
                                        title=entry.get("title", key), source=entry.get("source", "static-corpus"),
-                                       url=entry.get("url", ""), text=entry.get("text") or None,
+                                       url=entry.get("url", ""), text=text,
                                        retrieved_at=entry.get("retrieved_at") or None,
-                                       status="resolved" if entry.get("text") and entry.get("retrieved_at") else "existence-only"))
+                                       status="resolved" if text and entry.get("retrieved_at") and not whole_regulation_key else "existence-only"))
         return found
 
 

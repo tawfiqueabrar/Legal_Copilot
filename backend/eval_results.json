@@ -1,48 +1,48 @@
 {
-  "run_mode": "offline",
-  "demo_file": "demo/sample_msa.txt",
-  "matching_rule": "A planted risk matches a reported risk only when at least one referenced clause contains an expected section number and an exact quote contains the planted quote anchor (whitespace/case/smart-quote normalization only). Cross-clause recall additionally requires at least two distinct referenced clause IDs.",
+  "run_mode": "live",
+  "timed_out_stage": "setup/preflight (no stage event recorded)",
+  "timed_out_waiting_on_model": false,
+  "model_metadata": {
+    "configured_primary": "gemini-3.6-flash",
+    "configured_support_checker": "gemini-3.6-flash",
+    "configured_fallback": "gemini-3.1-flash-lite",
+    "temperature_requested": 0.0,
+    "model_calls": [],
+    "fallback_used": false
+  },
+  "matching_rule": "Strict quote-anchor recall requires expected section overlap and quote-anchor overlap; section-match recall requires section overlap only; cross-clause strict recall also requires two distinct clause IDs.",
   "risk_recall": {
     "value": null,
-    "status": "not run: GEMINI_API_KEY missing",
-    "metric": "matched planted risks / total planted risks"
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "risk_recall"
+  },
+  "section_match_recall": {
+    "value": null,
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "section_match_recall"
   },
   "cross_clause_recall": {
     "value": null,
-    "status": "not run: GEMINI_API_KEY missing",
-    "metric": "matched planted cross-clause risks / total planted cross-clause risks"
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "cross_clause_recall"
   },
   "quote_grounding_rate": {
     "value": null,
-    "status": "not run: GEMINI_API_KEY missing",
-    "metric": "reported risk quotes present in source / reported risk quotes"
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "quote_grounding_rate"
   },
-  "citation_precision": {
+  "distinct_authority_precision": {
     "value": null,
-    "status": "BLOCKED: statute text not loaded",
-    "metric": "eligible cited authorities resolving to authority-bank entries / eligible cited authorities"
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "distinct_authority_precision"
   },
   "claim_verification_rate": {
     "value": null,
-    "status": "BLOCKED: statute text not loaded",
-    "metric": "verified claims / claims"
-  },
-  "required_statute_text": {
-    "CAL BUS. & PROF. CODE § 16600": "BLOCKED: statute text not loaded",
-    "CAL CIV. CODE § 1798.100": "BLOCKED: statute text not loaded"
-  },
-  "cal_bpc_16600_support_check": {
-    "value": null,
-    "status": "BLOCKED: statute text not loaded",
-    "metric": "independent support check against loaded statute text"
-  },
-  "cal_civ_1798_100_support_check": {
-    "value": null,
-    "status": "BLOCKED: statute text not loaded",
-    "metric": "independent support check against loaded statute text"
+    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
+    "metric": "claim_verification_rate"
   },
   "fabrication_test": {
-    "status": "passed",
-    "result_status": "rejected"
+    "status": "not run: hard timeout",
+    "result_status": "not run"
   }
 }

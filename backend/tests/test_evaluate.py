@@ -19,5 +19,25 @@ def test_eval_matching_requires_section_and_quote_overlap():
     }
     metrics = _status_from_memo(memo, expected, "The cap applies. Indemnity obligations remain outside it.")
     assert metrics["risk_recall"]["value"] == 1.0
+    assert metrics["section_match_recall"]["value"] == 1.0
     assert metrics["cross_clause_recall"]["value"] == 1.0
     assert metrics["quote_grounding_rate"]["value"] == 1.0
+
+
+def test_section_match_recall_does_not_require_quote_anchor_and_authorities_are_distinct():
+    expected = {"planted_risks": [{"id": "planted", "sections": ["2.2"], "quote": "the planted quote"}]}
+    memo = {
+        "clauses": [{"id": "C1", "heading": "2.2 Changes", "text": "A different grounded quotation."}],
+        "risks": [{"clause_ids": ["C1"], "exact_quotes": ["A different grounded quotation."]}],
+        "authority_bank": [{"id": "A1"}],
+        "claims": [
+            {"authority_ids": ["A1", "A2"], "result": {"status": "verified"}},
+            {"authority_ids": ["A1"], "result": {"status": "existence_only"}},
+        ],
+    }
+    metrics = _status_from_memo(memo, expected, "A different grounded quotation.")
+    assert metrics["section_match_recall"]["value"] == 1.0
+    assert metrics["risk_recall"]["value"] == 0.0
+    assert metrics["distinct_authority_precision"]["distinct_authorities_cited"] == 2
+    assert metrics["distinct_authority_precision"]["distinct_authorities_found_in_bank"] == 1
+    assert metrics["distinct_authority_precision"]["value"] == 0.5

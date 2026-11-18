@@ -36,3 +36,12 @@ def test_source_lookup_alone_never_marks_citation_verified(monkeypatch):
 def test_unsupported_input_is_rejected():
     result = run_inline(verify_api.verify_citation(verify_api.CitationProbeRequest(citation="999 999")))
     assert result.result.status == "rejected"
+
+
+def test_missing_gdpr_article_abstains_as_source_not_loaded(monkeypatch):
+    monkeypatch.setattr(verify_api.workflow, "resolver", MissingResolver())
+    result = run_inline(verify_api.verify_citation(verify_api.CitationProbeRequest(citation="GDPR Article 999")))
+    assert result.normalized_key == "EU REGULATION 2016/679 ART. 999"
+    assert result.result.status == "unverified"
+    assert any("Source not loaded" in reason for reason in result.result.reasons)
+    assert result.result.status != "verified"

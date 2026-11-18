@@ -1,0 +1,25 @@
+flowchart TD
+    U["User uploads contract<br/>(.txt / .pdf / .docx)"] --> ING["ingest<br/>parse document"]
+    ING --> SEG["segment<br/>clauses with section numbers"]
+    SEG --> JUR["detect_jurisdiction<br/>abstain if unclear"]
+    JUR --> CHK["checklist_scan<br/>quote-grounded risks"]
+    CHK --> XC["cross_clause_scan<br/>risks spanning 2+ clauses"]
+    XC --> RES["research<br/>find candidate authorities"]
+
+    subgraph SRC["Authority sources"]
+        STAT[("statutes.json<br/>static corpus with url + retrieved_at")]
+        CL["CourtListener<br/>live case lookup"]
+    end
+    STAT --> RES
+    CL --> RES
+
+    RES --> BANK["build_bank<br/>resolved real sources only<br/>IDs: A1, A2, ..."]
+    BANK --> DRAFT["draft_memo<br/>may cite only bank IDs"]
+    DRAFT --> VER["verify<br/>existence + independent support check<br/>(temperature 0, verbatim quote required)"]
+    VER -->|"Verified / Existence-only / Unverified"| FIN["finalize<br/>status labels + evidence gaps"]
+    VER -->|"Rejected: removed from memo"| REM["removed_claims<br/>kept for the audit trail"]
+    REM --> FIN
+    FIN --> OUT["Preliminary Risk Assessment<br/>DOCX / PDF export<br/>not-legal-advice notice"]
+
+    JUR -.->|"jurisdiction unclear or source not loaded"| GAP["Not assessed / Evidence gap"]
+    GAP -.-> FIN

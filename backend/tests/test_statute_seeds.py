@@ -16,7 +16,8 @@ def test_every_seed_key_exists_in_static_corpus():
         "Cal. Civ. Code § 1798.140",
     ]
     normalized = {candidate.normalized_key for raw in seed_citations for candidate in extract_citations(raw)}
-    assert normalized == set(corpus)
+    # Article-scoped GDPR entries may extend the seed corpus independently.
+    assert normalized <= set(corpus)
     assert all({"title", "url", "text", "retrieved_at"} <= entry.keys() for entry in corpus.values())
 
 

@@ -21,6 +21,7 @@ class Authority(BaseModel):
     source: str
     url: str
     text: str | None = None
+    chunk_locator: str | None = None
     retrieved_at: str | None = None
     status: Literal["resolved", "existence-only"] = "existence-only"
 

@@ -1,0 +1,58 @@
+{
+  "EU REGULATION 2016/679": {
+    "topic_tags": ["data_protection"],
+    "jurisdictions": ["EU"]
+  },
+  "EU REGULATION 2016/679 ART. 28": {
+    "topic_tags": ["data_protection", "data_processing"],
+    "jurisdictions": ["EU"]
+  },
+  "EU REGULATION 2016/679 ART. 33": {
+    "topic_tags": ["data_protection", "security_breach"],
+    "jurisdictions": ["EU"]
+  },
+  "EU REGULATION 2016/679 ART. 44": {
+    "topic_tags": ["data_protection", "data_transfer"],
+    "jurisdictions": ["EU"]
+  },
+  "EU REGULATION 2016/679 ART. 45": {
+    "topic_tags": ["data_protection", "data_transfer"],
+    "jurisdictions": ["EU"]
+  },
+  "EU REGULATION 2016/679 ART. 46": {
+    "topic_tags": ["data_protection", "data_transfer"],
+    "jurisdictions": ["EU"]
+  },
+  "CAL BUS. & PROF. CODE \u00a7 16600": {
+    "topic_tags": ["antitrust_competition"],
+    "jurisdictions": ["California"]
+  },
+  "CAL BUS. & PROF. CODE \u00a7 16600.5": {
+    "topic_tags": ["antitrust_competition"],
+    "jurisdictions": ["California"]
+  },
+  "29 U.S.C. \u00a7 206": {
+    "topic_tags": ["employment"],
+    "jurisdictions": ["US"]
+  },
+  "29 U.S.C. \u00a7 207": {
+    "topic_tags": ["employment"],
+    "jurisdictions": ["US"]
+  },
+  "15 U.S.C. \u00a7 45": {
+    "topic_tags": ["antitrust_competition", "consumer_protection"],
+    "jurisdictions": ["US"]
+  },
+  "18 U.S.C. \u00a7 1836": {
+    "topic_tags": ["ip_trade_secret"],
+    "jurisdictions": ["US"]
+  },
+  "CAL CIV. CODE \u00a7 1798.100": {
+    "topic_tags": ["data_protection", "consumer_protection", "data_practices", "security_breach"],
+    "jurisdictions": ["California"]
+  },
+  "CAL CIV. CODE \u00a7 1798.140": {
+    "topic_tags": ["data_protection", "consumer_protection", "data_practices"],
+    "jurisdictions": ["California"]
+  }
+}

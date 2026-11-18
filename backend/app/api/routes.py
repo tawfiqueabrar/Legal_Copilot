@@ -5,6 +5,7 @@ from app.config import settings
 from app.services.sessions import SessionStore
 from app.ingestion import ingest_document
 from app.agents.workflow import LegalWorkflow
+from app.services.gemini import gemini_error_details
 
 router = APIRouter(prefix="/api")
 store = SessionStore(settings.session_ttl_seconds)
@@ -35,7 +36,7 @@ async def _run(session):
             raise RuntimeError("Workflow completed without a memo")
         await session.events.put({"event": "result", "data": session.result or {"error": "Memo generation failed", "errors": result.get("errors", [])}})
     except Exception as exc:
-        session.analysis_error = {"message": "Analysis failed. Check service configuration and retry."}
+        session.analysis_error = gemini_error_details(exc, api_key=settings.gemini_api_key)
         await session.events.put({"event": "error", "data": session.analysis_error})
     finally:
         session.running = False

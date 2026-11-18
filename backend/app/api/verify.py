@@ -1,4 +1,5 @@
 """Citation-only probe endpoint. A source lookup never upgrades a claim to verified."""
+import re
 from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -52,6 +53,16 @@ async def verify_citation(request: CitationProbeRequest):
         authority = await workflow.resolver.resolve(citation)
     except Exception:
         authority = None
+    if authority is None and re.fullmatch(r"EU REGULATION 2016/679 ART\. \d+", citation.normalized_key):
+        return CitationProbeResponse(
+            citation=request.citation,
+            normalized_key=citation.normalized_key,
+            result=ClaimResult(
+                claim_id="citation-probe",
+                status="unverified",
+                reasons=[f"Source not loaded: no exact authority entry exists for {citation.normalized_key}."],
+            ),
+        )
     bank = AuthorityBank([authority] if authority else [])
     # This probe tests source resolution only. Even a resolved source receives an
     # unverified result because no substantive legal claim was submitted.

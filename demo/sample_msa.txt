@@ -68,7 +68,7 @@ This Master Services Agreement (Agreement) is entered into by Northstar Retail G
 
 7.1 Supplier will process Customer Data to provide, maintain, support, and secure the Services. Supplier may also use Customer Data to develop, test, and improve its products if the data is aggregated or de-identified. Supplier will determine the technical means for such processing.
 
-7.2 Supplier will maintain commercially reasonable administrative, physical, and technical safeguards consistent with its then-current security program. Supplier may change its controls from time to time if it determines that the change does not materially reduce its overall security posture. Customer may request Supplier's current security summary once per year, subject to confidentiality obligations.
+7.2 Supplier will maintain commercially reasonable administrative, physical, and technical safeguards consistent with its then-current security program. Supplier may change its controls from time to time if it determines that the change does not materially reduce its overall security posture. Customer may request Supplier's current security summary once per year, subject to confidentiality obligations. Supplier's current encryption and subprocessor details are [REDACTED] in this copy.
 
 7.3 Supplier will notify Customer of a Security Incident without undue delay and in any event within thirty days after confirming the incident. Supplier will provide information reasonably available to it and cooperate with Customer's investigation. Supplier may charge its then-current rates for assistance beyond its standard incident response.
 

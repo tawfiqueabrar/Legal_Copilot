@@ -25,7 +25,7 @@ async def get_memo(session_id: str):
     if not session:
         raise HTTPException(404, "Session expired or not found.")
     if session.analysis_error:
-        raise HTTPException(424, "Analysis failed; no memo is available.")
+        raise HTTPException(424, detail=session.analysis_error)
     if session.result is None:
         raise HTTPException(409, "Analysis has not completed.")
     return session.result

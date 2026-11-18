@@ -4,7 +4,7 @@
 
 Start FastAPI from `backend` and Next.js from `frontend`. Confirm the UI health banner says the API is available. Analysis also needs a server-side Gemini key. Citation lookups may require network access. Do not use a client contract; use only `demo/sample_msa.txt`.
 
-**Current accuracy gate:** the statute corpus does not contain text for the California B&P section or California Civil Code privacy section. Their support check is currently **BLOCKED: statute text not loaded**. Do not present a Verified badge for either authority. If the corpus is populated later from an allowed source, show the label returned by the backend; if the backend returns Existence-only or Unverified, show that actual label.
+**Current accuracy gate:** the corpus includes text for California B&P § 16600, California Civil Code § 1798.100, and GDPR Article 33. A loaded source does not itself make a claim Verified: use only the exact backend status returned for each claim. The current evaluator run has no executed support-check calls, so it supplies no Verified badge for those checks.
 
 ## Run of show
 
@@ -18,7 +18,7 @@ Show the live trace as document ingestion, clause segmentation, jurisdiction rev
 
 ### 1:10–2:00 — Risks and memorandum
 
-Open risk cards and compare their exact quoted spans with the left document pane. For cross-clause findings, use each clause link to show both referenced locations. Show mitigation text, then scroll to the memorandum and authority bank. Click an `[A#]` marker to reach its source record. Explain that Verified, Existence-only, Unverified, and Rejected badges reflect backend status only. The not-legal-advice notice stays visible in the memo.
+Open risk cards and compare their exact quoted spans with the left document pane. For cross-clause findings, use each clause link to show both referenced locations. Open the Evidence gaps section and point to the `[REDACTED]` marker in the sample agreement. Show mitigation text, then scroll to the memorandum and authority bank. Click an `[A#]` marker to reach its source record. Explain that Verified, Existence-only, Unverified, and Rejected badges reflect backend status only. The not-legal-advice notice and preliminary assessment footer stay visible in the memo.
 
 ### 2:00–2:30 — Citation probe
 
@@ -26,7 +26,7 @@ Enter `999 U.S. 999` in “Test a citation.” The closed-set verifier should re
 
 ### 2:30–3:00 — Evaluation and purge
 
-Open `backend/eval_results.json` or the recorded evaluation table in the README. Current live pipeline metrics are marked not run when provider keys are absent; statute-text-dependent checks are marked **BLOCKED: statute text not loaded**. Finish by choosing “Delete session” and show the analysis view clear after the API purge succeeds.
+Open `backend/eval_results.json` or the recorded evaluation table in the README. The recorded run used `gemini-3.1-flash-lite` and reports 25.0% risk recall, 0.0% cross-clause recall, 100.0% quote grounding, 100.0% citation precision, and 0.0% claim verification. Per-statute support-check rows say not run because the evaluator does not isolate those outcomes. Finish by choosing “Delete session” and show the analysis view clear after the API purge succeeds.
 
 ## Fallback path
 
