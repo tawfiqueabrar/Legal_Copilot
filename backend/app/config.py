@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # regardless of the process working directory.
     model_config = SettingsConfigDict(env_file=BACKEND_ENV_FILE, env_ignore_empty=True, extra="ignore")
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"
     gemini_fallback_model: str = ""
     support_check_model: str = ""
     gemini_cache_ttl_seconds: int = 3600

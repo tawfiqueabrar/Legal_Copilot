@@ -8,6 +8,13 @@ def test_default_env_file_is_absolute_and_relative_to_backend():
     assert Path(BACKEND_ENV_FILE) == Path(__file__).resolve().parents[1] / ".env"
 
 
+def test_default_gemini_model_is_a_current_supported_model(monkeypatch):
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    configured = Settings(_env_file=None)
+
+    assert configured.gemini_model == "gemini-3.8-flash"
+
+
 def test_gemini_and_courtlistener_variables_are_loaded_from_env_file(tmp_path):
     env_file = tmp_path / ".env"
     env_file.write_text(
