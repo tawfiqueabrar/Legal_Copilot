@@ -205,6 +205,16 @@ def test_error_details_classify_and_redact_credential():
     }
 
 
+def test_error_details_include_provider_retry_wait():
+    error = ApiFailure(429, "try again in 14.76s")
+    error.retry_after_seconds = 14.76
+
+    details = gemini_error_details(error, provider_name="Groq")
+
+    assert details["provider"] == "Groq"
+    assert details["retry_after_seconds"] == 14.76
+
+
 def test_client_has_60_second_timeout_and_sdk_internal_retries_disabled(monkeypatch):
     captured = {}
 

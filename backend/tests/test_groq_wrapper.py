@@ -9,9 +9,10 @@ from conftest import run_inline
 
 
 class FakeResponse:
-    def __init__(self, status_code, body):
+    def __init__(self, status_code, body, headers=None):
         self.status_code = status_code
         self.body = body
+        self.headers = headers or {}
 
     def json(self):
         return self.body
@@ -55,6 +56,29 @@ def test_groq_wrapper_surfaces_http_status_without_credentials():
 
     assert error.value.code == 429
     assert "secret-test-key" not in str(error.value)
+
+
+def test_groq_wrapper_honors_short_rate_limit_wait_and_retries_once():
+    responses = [
+        FakeResponse(429, {"error": {"message": "Please try again in 14.76s"}}),
+        FakeResponse(200, valid_body()),
+    ]
+    sleeps = []
+    calls = []
+
+    async def post(_url, **_kwargs):
+        calls.append(True)
+        return responses.pop(0)
+
+    async def sleep(delay):
+        sleeps.append(delay)
+
+    wrapper = GroqCallWrapper("key", default_model="qwen/model", post=post, sleep=sleep)
+    result, _ = run_inline(wrapper.generate("prompt", SupportVerdict))
+
+    assert isinstance(result, SupportVerdict)
+    assert len(calls) == 2
+    assert sleeps == [14.76]
 
 
 def test_groq_wrapper_rejects_invalid_json():

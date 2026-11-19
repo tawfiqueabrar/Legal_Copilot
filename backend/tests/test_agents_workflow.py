@@ -92,8 +92,12 @@ def test_fake_model_and_resolver_produce_quote_grounded_cross_clause_memo():
     assert all(claim["result"]["authority_quotes"] == [SUPPORT_TEXT] for claim in memo["claims"] if claim["result"]["status"] == "verified")
     assert "Not legal advice" in memo["notice"]
     assert memo["analysis_metadata"]["model_calls"]
+    expected_support_model = (
+        settings.groq_support_model or settings.groq_model
+        if settings.provider_name == "groq" else settings.support_check_model
+    )
     assert all(
-        call["model"] == (settings.support_check_model if call["result_schema"] == "SupportVerdict" else settings.gemini_model)
+        call["model"] == (expected_support_model if call["result_schema"] == "SupportVerdict" else settings.active_model)
         for call in memo["analysis_metadata"]["model_calls"]
     )
 

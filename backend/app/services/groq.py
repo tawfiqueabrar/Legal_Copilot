@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import base64
 import json
+import asyncio
+import re
 from typing import Any, Callable, Awaitable
 
 import httpx
@@ -10,6 +12,7 @@ import httpx
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_TIMEOUT_SECONDS = 60.0
+MAX_AUTOMATIC_RATE_LIMIT_WAIT_SECONDS = 60.0
 
 
 class GroqApiError(RuntimeError):
@@ -29,11 +32,13 @@ class GroqCallWrapper:
         default_model: str,
         timeout: float = GROQ_TIMEOUT_SECONDS,
         post: Callable[..., Awaitable[Any]] | None = None,
+        sleep: Callable[[float], Awaitable[Any]] = asyncio.sleep,
     ):
         self.api_key = api_key
         self.default_model = default_model
         self.timeout = timeout
         self.post = post
+        self.sleep = sleep
 
     async def generate(
         self,
@@ -72,19 +77,40 @@ class GroqCallWrapper:
             "response_format": {"type": "json_object"},
         }
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
-        if self.post:
-            response = await self.post(GROQ_API_URL, headers=headers, json=payload, timeout=self.timeout)
-        else:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.post(GROQ_API_URL, headers=headers, json=payload)
-        if response.status_code >= 400:
+        for attempt in range(2):
+            if self.post:
+                response = await self.post(GROQ_API_URL, headers=headers, json=payload, timeout=self.timeout)
+            else:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    response = await client.post(GROQ_API_URL, headers=headers, json=payload)
+            if response.status_code < 400:
+                break
             message = "Groq request failed."
             try:
                 body = response.json()
                 message = str(body.get("error", {}).get("message") or body.get("message") or message)
             except Exception:
                 pass
-            raise GroqApiError(response.status_code, message[:1200])
+            error = GroqApiError(response.status_code, message[:1200])
+            retry_after = None
+            try:
+                retry_after = float(response.headers.get("retry-after", ""))
+            except (AttributeError, TypeError, ValueError):
+                match = re.search(r"(?:retry|try again)\s+in\s+(\d+(?:\.\d+)?)\s*s", message, re.I)
+                if match:
+                    retry_after = float(match.group(1))
+            if retry_after is not None and retry_after > 0:
+                error.retry_after_seconds = retry_after
+            if (
+                response.status_code == 429 and attempt == 0
+                and retry_after is not None
+                and 0 < retry_after <= MAX_AUTOMATIC_RATE_LIMIT_WAIT_SECONDS
+            ):
+                await self.sleep(retry_after)
+                continue
+            raise error
+        else:
+            raise RuntimeError("Groq retry loop ended unexpectedly")
         body = response.json()
         content = body["choices"][0]["message"]["content"]
         if not isinstance(content, str) or not content.strip():

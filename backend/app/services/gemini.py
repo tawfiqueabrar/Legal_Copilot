@@ -108,6 +108,9 @@ def gemini_error_details(
     attempted_models = getattr(exc, "attempted_models", None)
     if isinstance(attempted_models, list) and attempted_models:
         details["attempted_models"] = [str(model) for model in attempted_models]
+    retry_after = getattr(exc, "retry_after_seconds", None)
+    if isinstance(retry_after, (int, float)) and retry_after > 0:
+        details["retry_after_seconds"] = retry_after
     return details
 
 
