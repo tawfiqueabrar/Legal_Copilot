@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     # regardless of the process working directory.
     model_config = SettingsConfigDict(env_file=BACKEND_ENV_FILE, env_ignore_empty=True, extra="ignore")
     gemini_api_key: str = ""
+    llm_provider: str = "gemini"
+    groq_api_key: str = ""
+    groq_model: str = "qwen/qwen3.8-27b"
+    groq_support_model: str = "openai/gpt-oss-20b"
     gemini_model: str = "gemini-3.8-flash"
     # Keep a tested lightweight backup available in hosted deployments even when
     # GEMINI_FALLBACK_MODEL is omitted; failover is only used for transient failures.
@@ -46,6 +50,22 @@ class Settings(BaseSettings):
             value.strip() for value in (self.gemini_fallback_model, self.gemini_secondary_fallback_model)
             if value and value.strip() and value.strip() != self.gemini_model.strip()
         ))
+
+    @property
+    def provider_name(self) -> str:
+        return self.llm_provider.strip().casefold()
+
+    @property
+    def active_api_key(self) -> str:
+        return self.groq_api_key if self.provider_name == "groq" else self.gemini_api_key
+
+    @property
+    def analysis_configured(self) -> bool:
+        return bool(self.active_api_key)
+
+    @property
+    def active_model(self) -> str:
+        return self.groq_model if self.provider_name == "groq" else self.gemini_model
 
 
 settings = Settings()

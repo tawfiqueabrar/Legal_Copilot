@@ -68,7 +68,12 @@ def gemini_response_schema(schema: type) -> dict[str, Any]:
     return clean(source)
 
 
-def gemini_error_details(exc: BaseException, *, api_key: str = "") -> dict[str, Any]:
+def gemini_error_details(
+    exc: BaseException,
+    *,
+    api_key: str = "",
+    provider_name: str = "Gemini",
+) -> dict[str, Any]:
     """Return a UI-safe diagnostic without exposing the configured credential."""
     status = http_status(exc)
     raw_message = getattr(exc, "message", None) or str(exc) or "No provider message was supplied."
@@ -94,6 +99,7 @@ def gemini_error_details(exc: BaseException, *, api_key: str = "") -> dict[str, 
     else:
         category = "provider_error"
     details = {
+        "provider": provider_name,
         "category": category,
         "exception_class": name,
         "http_status": status,

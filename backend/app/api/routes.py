@@ -36,7 +36,10 @@ async def _run(session):
             raise RuntimeError("Workflow completed without a memo")
         await session.events.put({"event": "result", "data": session.result or {"error": "Memo generation failed", "errors": result.get("errors", [])}})
     except Exception as exc:
-        session.analysis_error = gemini_error_details(exc, api_key=settings.gemini_api_key)
+        session.analysis_error = gemini_error_details(
+            exc, api_key=settings.active_api_key,
+            provider_name=settings.provider_name.title(),
+        )
         session.analysis_error["stage"] = workflow._current_stage.get()
         await session.events.put({"event": "error", "data": session.analysis_error})
     finally:

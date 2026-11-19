@@ -113,7 +113,7 @@ function apiError(detail: unknown, fallback: string) {
     ? (detail as { detail?: unknown }).detail
     : detail;
   if (payload && typeof payload === "object") {
-    const error = payload as { category?: unknown; exception_class?: unknown; http_status?: unknown; message?: unknown; attempted_models?: unknown };
+    const error = payload as { category?: unknown; provider?: unknown; exception_class?: unknown; http_status?: unknown; message?: unknown; attempted_models?: unknown };
     const labels: Record<string, string> = {
       key_invalid: "Gemini key invalid",
       key_invalid_or_access_denied: "Gemini key invalid or access denied",
@@ -124,7 +124,8 @@ function apiError(detail: unknown, fallback: string) {
       provider_error: "Gemini unavailable",
     };
     if (typeof error.category === "string") {
-      const label = labels[error.category] || `Gemini unavailable (${error.category})`;
+      const provider = typeof error.provider === "string" && error.provider.trim() ? error.provider : "LLM provider";
+      const label = (labels[error.category] || `${provider} unavailable (${error.category})`).replace(/^Gemini/, provider);
       const exceptionClass = typeof error.exception_class === "string" ? error.exception_class : "UnknownException";
       const status = typeof error.http_status === "number" ? `HTTP ${error.http_status}` : "HTTP status unavailable";
       const message = typeof error.message === "string" && error.message.trim() ? error.message : "No provider message was supplied.";
@@ -239,10 +240,10 @@ export default function Home() {
     try {
       const response = await fetch(`${API}/health`, { cache: "no-store" });
       if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
-      const data = await response.json() as { status?: string; analysis_configured?: boolean };
+      const data = await response.json() as { status?: string; analysis_configured?: boolean; provider?: string };
       if (data.analysis_configured === false) {
         setHealth("unconfigured");
-        setHealthMessage("The backend is reachable, but GEMINI_API_KEY is not configured on Render.");
+        setHealthMessage(`The backend is reachable, but the selected ${data.provider || "LLM"} API key is not configured on Render.`);
       } else {
         setHealth("ok");
         setHealthMessage("");

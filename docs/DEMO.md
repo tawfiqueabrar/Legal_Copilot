@@ -4,7 +4,7 @@ Use [SUBMISSION_BRIEF.md](SUBMISSION_BRIEF.md) for judging-criterion mapping and
 
 ## Before the demo
 
-Start FastAPI from `backend` and Next.js from `frontend`. Confirm the UI health banner says the API is available. Analysis also needs a server-side Gemini key. Citation lookups may require network access. Do not use a client contract; use only `demo/sample_msa.txt`.
+Start FastAPI from `backend` and Next.js from `frontend`. Confirm the UI health banner says the API is available. Analysis needs a server-side key for the selected provider (`GEMINI_API_KEY` by default, or `GROQ_API_KEY` with `LLM_PROVIDER=groq`). Citation lookups may require network access. Do not use a client contract; use only `demo/sample_msa.txt`.
 
 **Accuracy gate:** the recorded live baseline predates the current source-grounded memo-generation change. It recorded six claims; one received Verified. Do not present those values as performance of the latest code. Never promise or stage a Verified badge. If the application displays one during the demo, confirm its backend status and show the exact authority and support quote. The source-identity smoke tests in eval_results.json are not substantive legal conclusions.
 
@@ -32,4 +32,4 @@ If you show `backend/eval_results.json`, label it clearly as the earlier live ba
 
 ## Fallback path
 
-If Gemini or network access is unavailable, show the health banner and API error state, then show the offline fabrication-test result and the blocked/not-run metrics in `backend/eval_results.json`. Do not claim live analysis or citation verification succeeded. If upload worked but analysis failed, delete the session before leaving the demo.
+If the selected model provider or network is unavailable, show the health banner and API error state, then show the offline fabrication-test result and the blocked/not-run metrics in `backend/eval_results.json`. Do not claim live analysis or citation verification succeeded. If upload worked but analysis failed, delete the session before leaving the demo.

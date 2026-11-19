@@ -33,6 +33,23 @@ def test_gemini_and_courtlistener_variables_are_loaded_from_env_file(tmp_path):
     assert configured.courtlistener_token == "dummy-courtlistener-token"
 
 
+def test_groq_provider_uses_groq_key_and_model(tmp_path):
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "LLM_PROVIDER=groq\nGROQ_API_KEY=dummy-groq-key\n"
+        "GROQ_MODEL=dummy-groq-model\nGROQ_SUPPORT_MODEL=dummy-checker-model\n",
+        encoding="utf-8",
+    )
+
+    configured = Settings(_env_file=env_file)
+
+    assert configured.provider_name == "groq"
+    assert configured.active_api_key == "dummy-groq-key"
+    assert configured.analysis_configured is True
+    assert configured.active_model == "dummy-groq-model"
+    assert configured.groq_support_model == "dummy-checker-model"
+
+
 def test_fallback_model_defaults_to_lightweight_backup(monkeypatch):
     monkeypatch.delenv("GEMINI_FALLBACK_MODEL", raising=False)
     monkeypatch.delenv("GEMINI_SECONDARY_FALLBACK_MODEL", raising=False)

@@ -197,6 +197,7 @@ def test_error_details_classify_and_redact_credential():
     details = gemini_error_details(ApiFailure(401, "invalid api key secret-value"), api_key="secret-value")
 
     assert details == {
+        "provider": "Gemini",
         "category": "key_invalid",
         "exception_class": "ApiFailure",
         "http_status": 401,
