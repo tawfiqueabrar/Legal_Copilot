@@ -350,8 +350,7 @@ export default function Home() {
     if (!gotResult) throw new Error("The analysis stream ended without a memo result.");
   };
 
-  const startAnalysis = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const runAnalysis = async () => {
     if (!file || working) return;
     setWorking(true);
     setError("");
@@ -359,6 +358,13 @@ export default function Home() {
     setProbe(null);
     setSteps(INITIAL_STEPS);
     try {
+      // A failed session cannot be resumed because the backend clears its uploaded
+      // bytes after analysis. Purge it, then upload the browser-held File again.
+      if (sessionId) {
+        const purge = await fetch(`${API}/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE", cache: "no-store" });
+        if (!purge.ok && purge.status !== 404) throw new Error(`Could not reset the previous session (${purge.status}).`);
+        setSessionId("");
+      }
       const body = new FormData();
       body.append("file", file, file.name);
       const create = await fetch(`${API}/sessions`, { method: "POST", body, cache: "no-store" });
@@ -390,6 +396,11 @@ export default function Home() {
     } finally {
       setWorking(false);
     }
+  };
+
+  const startAnalysis = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void runAnalysis();
   };
 
   const purgeSession = async () => {
@@ -485,7 +496,7 @@ export default function Home() {
         {health !== "checking" && <button className="button button-secondary" disabled={healthChecking} onClick={() => void checkHealth()} type="button">{healthChecking ? "Checking…" : "Retry connection"}</button>}
       </div>}
 
-      {error && <div role="alert" className="mx-4 mt-4 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-950 sm:mx-6">{error}</div>}
+      {error && <div role="alert" className="mx-4 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-950 sm:mx-6"><div className="min-w-0 flex-1"><p>{error}</p>{sessionId && file && !memo && <p className="mt-1 text-xs">No report was produced. Retry starts a fresh temporary session with the file still selected in this browser.</p>}</div>{sessionId && file && !memo && <button className="shrink-0 rounded-md border border-rose-400 bg-white px-3 py-2 text-xs font-bold hover:bg-rose-100 disabled:opacity-50" disabled={working} onClick={() => void runAnalysis()} type="button">{working ? "Retrying…" : "Retry analysis"}</button>}</div>}
 
       {!sessionId ? (
         <section id="home" className="landing-grid mx-auto grid max-w-6xl items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:py-16">

@@ -1,0 +1,645 @@
+%PDF-1.4
+%LegalCopilot
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R 22 0 R 24 0 R 26 0 R 28 0 R 30 0 R] /Count 13 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 797 >>
+stream
+0.035 0.20 0.18 rg
+0 0 595.28 841.89 re f
+0.910 1.000 0.970 rg BT /F2 34 Tf 1 0 0 1 52.00 631.89 Tm (Legal Copilot) Tj ET
+1.000 1.000 1.000 rg BT /F2 25 Tf 1 0 0 1 52.00 576.89 Tm (Technical Report) Tj ET
+0.820 0.910 0.880 rg BT /F1 9.4 Tf 1 0 0 1 52.00 538.89 Tm (How the document review system is built, how its retrieval and verification work, and where its) Tj ET
+0.820 0.910 0.880 rg BT /F1 9.4 Tf 1 0 0 1 52.00 525.89 Tm (current boundaries are.) Tj ET
+0.820 0.910 0.880 rg BT /F1 9.4 Tf 1 0 0 1 52.00 507.89 Tm (Evidence-led contract risk assessment) Tj ET
+0.820 0.910 0.880 rg BT /F1 9.4 Tf 1 0 0 1 52.00 489.89 Tm (19 November 2026 \267 Based on the repository implementation) Tj ET
+0.820 0.910 0.880 rg BT /F1 9.4 Tf 1 0 0 1 52.00 471.89 Tm (Prototype report \267 Not legal advice) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 2992 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (What Legal Copilot does) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 736.89 Tm (Legal Copilot is a first-pass contract review workspace. A user uploads a document, watches a) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 723.89 Tm (sequence of analysis agents, reviews risk observations anchored to exact contract wording, sees) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 710.89 Tm (which legal sources were loaded, and receives a structured preliminary assessment with) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 697.89 Tm (backend-generated verification labels.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 679.89 Tm (A deterministic LangGraph path from ingestion through report finalization.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 661.89 Tm (Memo claims refer to the resolved authority bank, never arbitrary model-written citations.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 643.89 Tm (Support quotations must be grounded, substantial, and not heading-only.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 625.89 Tm (Volatile process-local session memory, configurable in backend settings.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 602.89 Tm (Who it is for) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 584.89 Tm (The initial product hypothesis is a small in-house legal, procurement, or operations team that needs) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 571.89 Tm (a traceable issue list before qualified counsel reviews the contract. This is a workflow hypothesis,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 558.89 Tm (not validated market demand or a claim that the product replaces lawyers.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 535.89 Tm (What a successful review produces) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 517.89 Tm (- Extracted and segmented document text with stable clause IDs.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 500.89 Tm (- Quote-grounded potential risks, including interactions across clauses where the evidence supports) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 488.89 Tm (them.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 471.89 Tm (- Retrieved authority records and support-check outcomes, shown with explicit statuses.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 454.89 Tm (- A "Preliminary Contract Risk Assessment" with coverage gaps and mitigation suggestions.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 437.89 Tm (- DOCX/PDF export and a session purge action.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 2) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 4412 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (System map) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 736.89 Tm (The browser handles the review experience. FastAPI owns sessions and coordinates the analysis graph.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 723.89 Tm (The graph combines deterministic parsing/retrieval/verification code with schema-constrained Gemini) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 710.89 Tm (calls. Legal sources come from the local static corpus and, when available, CourtListener.) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 692.89 Tm ([ Next.js UIupload \267 trace \267 report ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 676.89 Tm ([ FastAPIsessions \267 SSE \267 export ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 660.89 Tm ([ LangGraph10 sequential nodes ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 644.89 Tm ([ PDF / DOCX / TXT / image ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 628.89 Tm ([ Parse + segmentclauses / offsets ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 612.89 Tm ([ Risk scanssingle + cross-clause ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 596.89 Tm ([ BM25 + optional vector/rerank ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 580.89 Tm ([ Static statute corpusarticle/section text ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 564.89 Tm ([ CourtListenercase records + opinion text ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 548.89 Tm ([ Resolved authority bank[A1], [A2], \205 ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 532.89 Tm ([ Source-grounded claim construction ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 516.89 Tm ([ Independent support check ]) Tj ET
+0.030 0.350 0.270 rg BT /F1 8 Tf 1 0 0 1 60.00 500.89 Tm ([ Preliminary assessmentverified / gaps / exports ]) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 484.89 Tm (Privacy boundary: uploaded bytes and session outputs are held in process memory; external AI and) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 471.89 Tm (search providers receive inputs needed for their functions. Provider retention is governed by the) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 458.89 Tm (configured provider/account terms.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 435.89 Tm (Technology layers) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 417.89 Tm (Web interface) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 402.89 Tm (Next.js App Router, TypeScript, Tailwind) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 387.89 Tm (Upload, live trace, evidence/report rendering, citation probe, exports, purge.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 372.89 Tm (API) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 357.89 Tm (FastAPI, async endpoints, Server-Sent Events) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 342.89 Tm (Session lifecycle, progress events, memo retrieval, health and verification routes.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 327.89 Tm (Orchestration) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 312.89 Tm (LangGraph StateGraph) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 297.89 Tm (Typed shared state and explicit sequential analysis nodes.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 282.89 Tm (Language model) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 267.89 Tm (Google Gemini SDK through a shared wrapper) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 252.89 Tm (Structured extraction, jurisdiction/risk scans, and memo summary; schema validation occurs in Python.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 237.89 Tm (Retrieval) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 222.89 Tm (BM25 + in-memory Qdrant option + Cohere rerank option) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 207.89 Tm (Lexical search is the local baseline; external embedding/rerank calls are optional.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 3) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 5820 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (From upload to report) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 736.89 Tm (The graph is intentionally linear. Each node receives and updates a shared state object; progress is) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 723.89 Tm (emitted as named events so the UI can show where the system is working or has failed.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 705.89 Tm (1) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 690.89 Tm (ingest) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 675.89 Tm (Parse text already extracted by the ingestion service; if scanned content has no usable text, attempt multimodal) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 665.89 Tm (Gemini extraction for supported PDF/image input. Preserve warnings where OCR/vision cannot read content.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 650.89 Tm (2) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 635.89 Tm (segment) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 620.89 Tm (Create stable clause IDs, section/heading information, text spans/offsets, and a definitions map.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 605.89 Tm (3) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 590.89 Tm (detect_jurisdiction) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 575.89 Tm (Inspect contract language for governing law, venue, party locations, and data-subject regions. Record) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 565.89 Tm (uncertainty rather than assume the applicable regime.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 550.89 Tm (4) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 535.89 Tm (checklist_scan) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 520.89 Tm (Scan clause batches for common issue families such as liability, indemnity, renewal, termination, data/security,) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 510.89 Tm (IP, confidentiality, and governing law.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 495.89 Tm (5) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 480.89 Tm (cross_clause_scan) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 465.89 Tm (Generate candidate clause pairs using document-wide term overlap, defined-term references, topic links, and) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 455.89 Tm (explicit section references; ask the model to assess genuine interactions and quote each involved clause.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 440.89 Tm (6) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 425.89 Tm (research) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 410.89 Tm (Build queries from risk title/summary/evidence plus jurisdiction and subject hints. Retrieve relevant corpus) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 400.89 Tm (chunks; optionally reorder candidates using configured embedding/reranking services. Search CourtListener where) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 390.89 Tm (relevant.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 375.89 Tm (7) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 360.89 Tm (build_bank) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 345.89 Tm (Assign stable authority IDs to resolved records and link risk observations to bank entries.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 330.89 Tm (8) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 315.89 Tm (draft_memo) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 300.89 Tm (Generate an executive summary in a Pydantic schema. Legal support claims are constructed by server code from) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 290.89 Tm (loaded source sentences rather than free-form legal citations.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 275.89 Tm (9) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 260.89 Tm (verify) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 245.89 Tm (Check clause quotes, authority IDs, source quotes, and support verdicts. Unsupported claims remain unverified or) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 235.89 Tm (are removed according to the report rules.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 220.89 Tm (10) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 205.89 Tm (finalize) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 190.89 Tm (Assemble risk cards, loaded sources, "not assessed" regimes, evidence gaps, statuses, disclaimers, and) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 180.89 Tm (exportable memo data.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 160.89 Tm (State exchanged across nodes) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 142.89 Tm (The graph carries session and filename metadata; extracted document text and page texts; parsed) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 129.89 Tm (clause records and definitions; jurisdiction findings; risks and warnings; retrieval keys/scores;) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 116.89 Tm (authority candidates and bank entries; memo draft; verification results; progress events; and) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 103.89 Tm (model-call/support-check metadata. The state is runtime data, not a persistent document database.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 4) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 4090 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Document parsing and clause evidence) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (Supported input routes) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 713.89 Tm (PDF) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 698.89 Tm (PyMuPDF extracts page text. A page with no text layer is rendered and sent to Tesseract if available.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 683.89 Tm (OCR can miss or distort names, numbering, and deadlines; inspect the source page.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 668.89 Tm (DOCX) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 653.89 Tm (python-docx reads paragraphs and tables into text.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 638.89 Tm (Complex layout, footnotes, tracked changes, and text boxes may not be represented fully.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 623.89 Tm (TXT) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 608.89 Tm (UTF-8 text is decoded directly.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 593.89 Tm (Line breaks and heading conventions affect segmentation.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 578.89 Tm (Scanned image) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 563.89 Tm (Image is validated in memory and sent inline to the multimodal triage call when configured.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 548.89 Tm (Vision may be unavailable, unreadable, or incomplete; missing text is surfaced as a warning.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 528.89 Tm (Segmentation and quote grounding) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 510.89 Tm (The segmenter assigns stable identifiers such as C1, C2, and so on, associates clauses with) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 497.89 Tm (headings/sections, and tracks character offsets. Definitions are collected for use in cross-clause) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 484.89 Tm (reasoning. Each proposed risk must point to existing clause IDs and include exact quote spans from) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 471.89 Tm (those clauses. The report assembly rejects evidence when a quote cannot be found in the stated) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 458.89 Tm (clause.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 440.89 Tm (Cross-clause observations require multiple involved clause references and quotes aligned to each) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 427.89 Tm (referenced clause. Candidate generation is generic: it uses shared terms, rare terms, explicit) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 414.89 Tm (references, and definition relationships. The document's wording is evidence; the model is asked to) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 401.89 Tm (explain why an interaction may matter, not to declare a legal result.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 378.89 Tm (Upload and memory behavior) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 360.89 Tm (The API enforces supported media types, a configured request size limit \(default 25 MB\), and a) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 347.89 Tm (session TTL \(default one hour\). PDF/DOCX/TXT parsing occurs in memory. The document bytes are) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 334.89 Tm (cleared when analysis finishes, and session deletion removes the result and queued events. There is) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 321.89 Tm (no persistent user-document storage in this implementation.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 5) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 4757 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (How RAG works here) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 736.89 Tm (Retrieval-augmented generation \(RAG\) supplies source material to a model or verifier at the time of) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 723.89 Tm (a question. Legal Copilot's legal-source retrieval combines a maintained local corpus with lexical) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 710.89 Tm (ranking; optional provider integrations can add semantic ranking. Retrieval selects evidence) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 697.89 Tm (candidates, but it does not prove that a provision applies or supports a proposition.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 674.89 Tm (1. Source corpus and metadata) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 656.89 Tm (The local file backend/data/statutes.json stores entries with normalized keys and fields such as) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 643.89 Tm (title, URL, source, kind, text, and retrieval timestamp. Topic/jurisdiction labels are maintained) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 630.89 Tm (separately in statute_tags.json. The static resolver exposes only loaded article/section-level) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 617.89 Tm (sources for research. Missing or empty text cannot be used as supporting authority.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 594.89 Tm (2. Exact-source chunks) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 576.89 Tm (Loaded source entries are split into paragraph/subsection chunks by slicing the stored text. Chunk) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 563.89 Tm (text is not paraphrased: each chunk remains an exact substring of its parent record and carries the) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 550.89 Tm (parent key plus a locator. This allows the UI and support checker to stay scoped to the correct) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 537.89 Tm (section.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 514.89 Tm (3. Lexical BM25 ranking) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 496.89 Tm (BM25 ranks chunks by query-term relevance. The query combines the risk's title, explanation,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 483.89 Tm (contract evidence and research questions with jurisdiction/subject hints. The implementation gates) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 470.89 Tm (results using minimum score and distinct-term matches, applies topic/jurisdiction boosts or) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 457.89 Tm (exclusions, caps chunks per source entry, and returns no source when no chunk passes the gate. This) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 444.89 Tm ("empty retrieval" behavior is intentional: weak nearest matches should not be presented as) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 431.89 Tm (authoritative.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 408.89 Tm (4. Optional semantic ranking) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 390.89 Tm (If configured, Voyage voyage-law-2 creates query/document embeddings and an in-memory Qdrant) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 377.89 Tm (collection; Cohere rerank-v3.5 can reorder BM25 candidates. These are optional external services.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 364.89 Tm (When absent or unavailable, the application falls back to BM25 instead of requiring a vector) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 351.89 Tm (service.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 328.89 Tm (5. Authority bank and generation) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 310.89 Tm (Resolved sources receive closed IDs such as [A1]. Claims may refer only to those IDs. The memo) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 297.89 Tm (writer is instructed not to invent legal sources or cite free-form law; server-side logic builds) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 284.89 Tm (support claims from eligible, loaded sentences. The result is then independently checked against the) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 271.89 Tm (exact authority source text.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 6) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 4479 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Closed-set verification) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 736.89 Tm (- Extract and normalize. Deterministic patterns recognize supported case/statute citation forms and map) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 724.89 Tm (them to normalized keys. Section/article identity matters; GDPR article citations resolve to) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 712.89 Tm (article-scoped keys and do not fall back to the entire regulation.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 695.89 Tm (- Resolve a real record. Static corpus lookups use exact normalized keys. CourtListener can resolve) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 683.89 Tm (case citations and fetch opinion text where available. A search hit without opinion text is) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 671.89 Tm (existence-only evidence, not support.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 654.89 Tm (- Build the closed bank. Each resolved authority receives an ID, title, source, URL, retrieval) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 642.89 Tm (metadata, text \(if loaded\), and status. A claim referencing an unknown ID is rejected.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 625.89 Tm (- Ground the contract evidence. The claim's clause quote must be found in the uploaded document. Risk) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 613.89 Tm (report evidence must also match its cited clause.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 596.89 Tm (- Run a separate support check. A checker call receives the claim and its cited authority text,) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 584.89 Tm (separately from memo drafting. The model is asked for a supporting passage, and the checker response is) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 572.89 Tm (validated against a strict Pydantic schema.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 555.89 Tm (- Validate the quotation in code. The authority quote must appear in the cited text, be at least 60) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 543.89 Tm (characters, end in sentence punctuation, and not be heading/section-number-only. A "supports" verdict) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 531.89 Tm (and grounded quote are both required for Verified.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 514.89 Tm (- Render backend status. Report labels are computed from verifier results; the frontend renders) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 502.89 Tm (returned labels and does not promote a status.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 485.89 Tm (Verified) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 470.89 Tm (The independent checker found support and returned an acceptable exact quote from loaded source text.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 455.89 Tm (A support check passed; applicability and legal interpretation still require human review.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 440.89 Tm (Existence-only) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 425.89 Tm (A source record exists, but source text or a grounded supporting passage is unavailable.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 410.89 Tm (Do not treat this as proof of the proposition.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 395.89 Tm (Unverified) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 380.89 Tm (Support could not be established, source is missing, or checker evidence failed a gate.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 365.89 Tm (Abstain and investigate the gap.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 350.89 Tm (Rejected) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 335.89 Tm (Claim violates a closed-bank or evidence rule, such as unknown IDs or a fabricated quote.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 320.89 Tm (Claim is excluded or explicitly listed as failed verification.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 7) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 4188 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Gemini calls, schemas, and resilience) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (Schema-constrained model calls) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 713.89 Tm (The shared Gemini wrapper requests JSON output with a schema generated from the Pydantic model,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 700.89 Tm (normalizes unsupported JSON Schema keywords, and validates the returned JSON locally. Analytical) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 687.89 Tm (calls request temperature 0. The independent support-check model defaults to the configured primary) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 674.89 Tm (model unless separately configured. Temperature 0 is a request parameter, not a guarantee of) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 661.89 Tm (deterministic answers.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 638.89 Tm (Retries and fallback) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 620.89 Tm (Request deadline) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 605.89 Tm (60 seconds via the SDK HTTP options.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 590.89 Tm (Retryable responses) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 575.89 Tm (HTTP 429, 503, and 504 with bounded exponential delays.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 560.89 Tm (Non-retryable responses) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 545.89 Tm (Other response codes such as 400/401/403/404 fail without retry.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 530.89 Tm (Fallback model) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 515.89 Tm (One fallback request is attempted after repeated 503/504 on the primary, if configured.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 500.89 Tm (Diagnostics) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 485.89 Tm (Exception class, HTTP status, category, and redacted message are available without exposing the key.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 470.89 Tm (Model metadata) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 455.89 Tm (Requested and actual model names plus fallback usage are recorded for calls.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 435.89 Tm (Configuration source of truth) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 417.89 Tm (backend/app/config.py loads environment variables and backend/.env relative to the config module,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 404.89 Tm (independent of the current working directory. Main keys include GEMINI_API_KEY, GEMINI_MODEL,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 391.89 Tm (optional GEMINI_FALLBACK_MODEL, SUPPORT_CHECK_MODEL, CourtListener credentials, and optional) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 378.89 Tm (Voyage/Cohere keys. In hosted deployments, set secrets in the backend service environment and) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 365.89 Tm (redeploy.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 342.89 Tm (Context caching) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 324.89 Tm (The README describes Gemini provider-side implicit caching for repeated large prefixes as) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 311.89 Tm (opportunistic. The application does not create explicit remote cache objects because a provider-side) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 298.89 Tm (cache complicates purge guarantees. Cache hits and cost reductions depend on provider behavior and) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 285.89 Tm (are not guaranteed; no fixed percentage savings should be claimed.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 8) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 19 0 R >>
+endobj
+21 0 obj
+<< /Length 4281 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Data lifecycle and operating model) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (Document lifecycle) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 713.89 Tm (- Browser holds the chosen file until upload.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 696.89 Tm (- FastAPI creates a random session ID and stores file bytes in a process-local session object.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 679.89 Tm (- Parsing, OCR, graph state, and results exist in runtime memory during the session.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 662.89 Tm (- After analysis, original uploaded bytes are cleared; report state remains in memory to support) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 650.89 Tm (viewing and export.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 633.89 Tm (- Delete session clears result/error/event data and cancels any running task; TTL expiry also removes) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 621.89 Tm (the session.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 599.89 Tm (API surface) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 581.89 Tm (GET /health) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 566.89 Tm (Service health and configuration readiness.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 551.89 Tm (POST /api/upload) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 536.89 Tm (Validate type/size and create a volatile session.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 521.89 Tm (POST /sessions/{id}/analyze) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 506.89 Tm (Start/stream asynchronous agent progress and result events.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 491.89 Tm (GET /api/analyze/{id}) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 476.89 Tm (Alternate analysis stream route.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 461.89 Tm (GET /sessions/{id}/memo) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 446.89 Tm (Fetch completed structured report.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 431.89 Tm (GET /sessions/{id}/memo.docx|memo.pdf) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 416.89 Tm (Export the completed report.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 401.89 Tm (DELETE /sessions/{id}) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 386.89 Tm (Purge the active session.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 371.89 Tm (POST /verify) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 356.89 Tm (Probe citation resolution; lookup alone does not establish legal support.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 336.89 Tm (Current hosting pattern) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 318.89 Tm (Recommended prototype layout: Next.js frontend on Vercel and FastAPI backend on Render. The) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 305.89 Tm (frontend's NEXT_PUBLIC_API_URL must point to the backend origin or use the configured same-origin) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 292.89 Tm (proxy route. Keep Gemini, CourtListener, Voyage, and Cohere secrets only in Render's backend) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 279.89 Tm (environment. Configure CORS, HTTPS, request limits, and access-log redaction.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 261.89 Tm (Deployment constraint: sessions are process-local. Use one backend worker/instance for the) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 248.89 Tm (prototype. Multiple workers or replicas can make a session created on one process unavailable on) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 235.89 Tm (another; a privacy-reviewed ephemeral session coordinator is required before scaling horizontally.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 9) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+22 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 21 0 R >>
+endobj
+23 0 obj
+<< /Length 3846 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (What a reviewer sees) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (1 \267 Upload) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 713.89 Tm (Choose PDF, DOCX, TXT, or supported image. File size/type and provider-handling notices appear) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 700.89 Tm (before analysis.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 677.89 Tm (2 \267 Agent trace) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 659.89 Tm (Ten workflow stages show waiting/running/completed/failed progress from backend events.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 636.89 Tm (3 \267 Clause evidence) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 618.89 Tm (Each risk links to its section and exact quoted text, including each clause for cross-clause) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 605.89 Tm (findings.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 582.89 Tm (4 \267 Report and authorities) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 564.89 Tm (Risk cards include conditional impact, action, source IDs, support quote, and backend status. The) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 551.89 Tm (report surfaces evidence/source gaps.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 528.89 Tm (5 \267 Citation probe) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 510.89 Tm (A pasted citation can test whether a source record resolves. The interface explains that record) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 497.89 Tm (lookup is not proposition verification.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 474.89 Tm (6 \267 Export / purge) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 456.89 Tm (Download a memo as DOCX/PDF, then delete the session to purge in-memory results.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 433.89 Tm (Failure states are part of the product) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 415.89 Tm (Unavailable model keys, model-not-found errors, provider overload/rate limits, network errors,) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 402.89 Tm (expired sessions, missing source text, failed OCR, and API downtime should be shown as actionable) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 389.89 Tm (states. The UI should not substitute sample data or silently upgrade a citation badge. The backend) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 376.89 Tm (error response is designed to include a category and sanitized diagnostics without disclosing) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 363.89 Tm (credentials.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 340.89 Tm (Accessibility and professional review) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 322.89 Tm (- Use text labels alongside colors for status badges.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 305.89 Tm (- Preserve exact evidence text; do not normalize the displayed quote.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 288.89 Tm (- Keep "not legal advice" and "preliminary assessment" visible.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 271.89 Tm (- Provide clear upload, retry, export, and purge actions.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 254.89 Tm (- Do not expose private model chain-of-thought; expose stage, evidence, sources, and reasons.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 10) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+24 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 23 0 R >>
+endobj
+25 0 obj
+<< /Length 3761 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Testing and evaluation) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (Automated tests) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 713.89 Tm (The repository includes backend pytest coverage for config loading, parsing/segmentation, citation) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 700.89 Tm (extraction and normalization, resolver behavior, closed-bank enforcement, quote grounding, verifier) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 687.89 Tm (statuses, report assembly, retrieval gating, and fake model/API responses. External calls are) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 674.89 Tm (replaced with fakes in offline tests.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 651.89 Tm (Build checks recorded in the workspace) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 633.89 Tm (115 pytest tests passed in the latest recorded local suite before this report was created.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 615.89 Tm (Next.js production build passed in the latest recorded check with the Render API URL supplied for) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 602.89 Tm (build-time configuration.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 579.89 Tm (Recommended evaluation protocol) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 561.89 Tm (- Use a counsel-reviewed, jurisdiction-labeled contract set with planted and naturally occurring) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 549.89 Tm (issues.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 532.89 Tm (- Score exact quote grounding, section match, non-obvious risk recall, cross-clause recall, false) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 520.89 Tm (positive rate, source identity precision, and support-check success separately.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 503.89 Tm (- Report abstention and "not assessed" coverage, not only positive detections.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 486.89 Tm (- Measure time to reviewer-ready issue list against a baseline workflow, with blind reviewer scoring.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 469.89 Tm (- Repeat across document types \(native PDF, scanned PDF, DOCX, image\), page counts, and extraction) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 457.89 Tm (quality.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 440.89 Tm (- Track latency, provider error rates, cost, retries, and cache behavior with document content excluded) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 428.89 Tm (from logs.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 406.89 Tm (What the current tests do not establish) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 388.89 Tm (- They do not prove legal correctness or guarantee recall on arbitrary contracts.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 371.89 Tm (- They do not replace a live, independently labeled evaluation of the current model/prompt) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 359.89 Tm (configuration.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 342.89 Tm (- They do not establish provider-side retention behavior, production availability, or multi-worker) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 330.89 Tm (session safety.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 11) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+26 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 25 0 R >>
+endobj
+27 0 obj
+<< /Length 4361 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Known limitations and next steps) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 731.89 Tm (Current limitations) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 713.89 Tm (- Source coverage is finite. A static corpus entry supports only its own section/article and loaded) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 701.89 Tm (text. Missing jurisdictions/regimes must remain "not assessed.") Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 684.89 Tm (- Support is conditional. A verifier status reflects a constrained evidence check; it does not resolve) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 672.89 Tm (choice-of-law questions or provide a final legal interpretation.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 655.89 Tm (- OCR and vision can fail. Poor scans, stamps, handwriting, tables, and low contrast may degrade) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 643.89 Tm (extraction.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 626.89 Tm (- External services are dependencies. The model, citation search, embeddings, and reranker depend on) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 614.89 Tm (network access, keys, quotas, and provider availability.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 597.89 Tm (- Session memory is single-process. Restarts lose sessions and multiple workers are not coordinated.) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 580.89 Tm (- No quantified cost/cache claim. Implicit context caching is provider-controlled; no fixed savings are) Tj ET
+0.120 0.200 0.240 rg BT /F1 9 Tf 1 0 0 1 57.00 568.89 Tm (guaranteed.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 546.89 Tm (Practical hardening roadmap) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 528.89 Tm (1) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 513.89 Tm (Run current end-to-end live evaluation on a counsel-labeled dataset; publish metrics with matching rules and) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 503.89 Tm (model versions.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 488.89 Tm (Establish measurable accuracy and abstention behavior.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 473.89 Tm (2) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 458.89 Tm (Complete privacy review of provider terms, secrets, retention settings, TLS, access controls, and logging.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 443.89 Tm (Make data handling claims defensible.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 428.89 Tm (3) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 413.89 Tm (Add a privacy-reviewed ephemeral session coordinator with TTL and purge guarantees.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 398.89 Tm (Enable reliable multi-instance deployment.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 383.89 Tm (4) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 368.89 Tm (Expand statutory coverage only from authoritative text with retrieval metadata and per-section tests.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 353.89 Tm (Avoid weak or mismatched legal support.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 338.89 Tm (5) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 323.89 Tm (Introduce monitoring for latency, timeouts, provider failures, cost, and extraction errors, without logging) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 313.89 Tm (document contents.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 298.89 Tm (Improve reliability and operational response.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 283.89 Tm (6) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 268.89 Tm (Run usability reviews with attorneys and procurement/legal operations teams.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 253.89 Tm (Validate workflow clarity and useful risk presentation.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 12) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+28 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 27 0 R >>
+endobj
+29 0 obj
+<< /Length 4476 >>
+stream
+0.035 0.29 0.24 rg
+0 830.89 595.28 11 re f
+0.040 0.250 0.210 rg BT /F2 21 Tf 1 0 0 1 52.00 775.89 Tm (Terms used in this report) Tj ET
+0.12 0.65 0.47 RG 2 w
+52 749.89 m 106 749.89 l S
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 736.89 Tm (Agent / node) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 721.89 Tm (A named pipeline step with a scoped task that reads/writes shared workflow state.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 706.89 Tm (Authority bank) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 691.89 Tm (The closed set of resolved source records assigned IDs such as A1 and A2.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 676.89 Tm (BM25) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 661.89 Tm (A lexical ranking method that scores document chunks against query terms.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 646.89 Tm (Chunk locator) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 631.89 Tm (A subsection/paragraph identifier locating the exact slice of a source entry.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 616.89 Tm (Closed-set citation) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 601.89 Tm (A citation that can only refer to a real authority ID already in the bank.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 586.89 Tm (Existence-only) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 571.89 Tm (A record was found, but its text/support is unavailable or insufficient.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 556.89 Tm (IRAC) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 541.89 Tm (Issue, Rule, Application/Analysis, Conclusion; a common legal memo structure.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 526.89 Tm (LangGraph) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 511.89 Tm (Graph orchestration framework used to define explicit workflow nodes and state transitions.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 496.89 Tm (RAG) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 481.89 Tm (Retrieval-augmented generation: retrieve source evidence and supply it to a model/checker.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 466.89 Tm (SSE) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 451.89 Tm (Server-Sent Events: a one-way HTTP stream carrying progress and completion events to the browser.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 436.89 Tm (Support quote) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 421.89 Tm (An exact passage from the authority text returned by an independent checker as evidence for a claim.) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 406.89 Tm (Volatile session) Tj ET
+0.120 0.200 0.240 rg BT /F1 8.4 Tf 1 0 0 1 52.00 391.89 Tm (In-memory process state that expires or can be explicitly purged, with no persistent local document store.) Tj ET
+0.050 0.320 0.270 rg BT /F2 11 Tf 1 0 0 1 52.00 371.89 Tm (Repository sources used for this report) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 353.89 Tm (Implementation descriptions were checked against the current repository files:) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 340.89 Tm (backend/app/agents/workflow.py; backend/app/services/retrieval.py; backend/app/services/gemini.py;) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 327.89 Tm (backend/app/verification/verifier.py; backend/app/verification/resolvers.py;) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 314.89 Tm (backend/app/services/sessions.py; backend/app/ingestion/parse.py; backend/app/api/routes.py;) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 301.89 Tm (backend/app/api/sessions.py; backend/app/config.py; backend/app/services/preliminary_report.py;) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 288.89 Tm (README.md; and docs/SUBMISSION_BRIEF.md.) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 270.89 Tm (Report generated from the repository state on 19 November 2026. Deployment configuration and) Tj ET
+0.090 0.170 0.210 rg BT /F1 9.4 Tf 1 0 0 1 52.00 257.89 Tm (provider behavior can change; verify environment variables and service status before a live demo.) Tj ET
+0.40 0.48 0.51 rg
+0.090 0.170 0.210 rg BT /F1 7 Tf 1 0 0 1 52.00 25.00 Tm (LEGAL COPILOT  /  TECHNICAL REPORT                                      PAGE 13) Tj ET
+0.83 0.88 0.87 RG 0.5 w
+52 39 m 543.28 39 l S
+endstream
+endobj
+30 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 29 0 R >>
+endobj
+xref
+0 31
+0000000000 65535 f 
+0000000023 00000 n 
+0000000072 00000 n 
+0000000213 00000 n 
+0000000310 00000 n 
+0000000412 00000 n 
+0000001260 00000 n 
+0000001402 00000 n 
+0000004446 00000 n 
+0000004588 00000 n 
+0000009052 00000 n 
+0000009195 00000 n 
+0000015068 00000 n 
+0000015212 00000 n 
+0000019355 00000 n 
+0000019499 00000 n 
+0000024309 00000 n 
+0000024453 00000 n 
+0000028985 00000 n 
+0000029129 00000 n 
+0000033370 00000 n 
+0000033514 00000 n 
+0000037848 00000 n 
+0000037992 00000 n 
+0000041891 00000 n 
+0000042035 00000 n 
+0000045849 00000 n 
+0000045993 00000 n 
+0000050407 00000 n 
+0000050551 00000 n 
+0000055080 00000 n 
+trailer
+<< /Size 31 /Root 1 0 R >>
+startxref
+55224
+%%EOF

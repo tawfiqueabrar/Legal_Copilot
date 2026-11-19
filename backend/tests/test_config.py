@@ -33,11 +33,11 @@ def test_gemini_and_courtlistener_variables_are_loaded_from_env_file(tmp_path):
     assert configured.courtlistener_token == "dummy-courtlistener-token"
 
 
-def test_fallback_model_defaults_to_empty(monkeypatch):
+def test_fallback_model_defaults_to_lightweight_backup(monkeypatch):
     monkeypatch.delenv("GEMINI_FALLBACK_MODEL", raising=False)
     configured = Settings(_env_file=None, _env_ignore_empty=True)
 
-    assert configured.gemini_fallback_model == ""
+    assert configured.gemini_fallback_model == "gemini-3.1-flash-lite"
 
 
 def test_support_check_model_defaults_to_analysis_model(tmp_path):

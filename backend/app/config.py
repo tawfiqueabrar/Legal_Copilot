@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=BACKEND_ENV_FILE, env_ignore_empty=True, extra="ignore")
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-flash"
-    gemini_fallback_model: str = ""
+    # Keep a tested lightweight backup available in hosted deployments even when
+    # GEMINI_FALLBACK_MODEL is omitted; the wrapper uses it only after primary 503/504.
+    gemini_fallback_model: str = "gemini-3.1-flash-lite"
     support_check_model: str = ""
     gemini_cache_ttl_seconds: int = 3600
     courtlistener_token: str = ""
