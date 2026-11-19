@@ -2,7 +2,10 @@
 
 import { ChangeEvent, DragEvent, FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
+const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL || "").trim().replace(/\/$/, "");
+const API = process.env.NODE_ENV === "development"
+  ? (CONFIGURED_API || "http://localhost:8000")
+  : CONFIGURED_API ? "/backend" : "";
 const MAX_UPLOAD_BYTES = 25_000_000;
 
 type Status = "verified" | "existence_only" | "unverified" | "rejected";
@@ -177,6 +180,7 @@ function CitationCheckPanel({ value, setValue, onSubmit, loading, error, probe }
 export default function Home() {
   const [health, setHealth] = useState<"checking" | "ok" | "unavailable" | "unconfigured">("checking");
   const [healthMessage, setHealthMessage] = useState("");
+  const [healthChecking, setHealthChecking] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [textPreview, setTextPreview] = useState("");
   const [fileUrl, setFileUrl] = useState("");
@@ -200,30 +204,39 @@ export default function Home() {
   const clauses = memo?.clauses ?? [];
   const authorityById = useMemo(() => new Map(authorities.map((item) => [item.id, item])), [authorities]);
 
-  useEffect(() => {
-    let mounted = true;
-    fetch(`${API}/health`, { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) throw new Error(`Health check returned ${response.status}`);
-        return response.json() as Promise<{ status?: string; analysis_configured?: boolean }>;
-      })
-      .then((data) => {
-        if (!mounted) return;
-        if (data.analysis_configured === false) {
-          setHealth("unconfigured");
-          setHealthMessage("Analysis is unavailable: the server has no configured Gemini key.");
-        } else {
-          setHealth("ok");
-          setHealthMessage("");
-        }
-      })
-      .catch((reason: unknown) => {
-        if (!mounted) return;
-        setHealth("unavailable");
-        setHealthMessage(reason instanceof Error ? reason.message : "The API health check failed.");
-      });
-    return () => { mounted = false; };
+  const checkHealth = useCallback(async () => {
+    setHealthChecking(true);
+    setHealth("checking");
+    setHealthMessage("");
+    if (!API) {
+      setHealth("unavailable");
+      setHealthMessage("NEXT_PUBLIC_API_URL is missing from this deployment. Add it for this Vercel environment, then redeploy.");
+      setHealthChecking(false);
+      return;
+    }
+    try {
+      const response = await fetch(`${API}/health`, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Backend returned HTTP ${response.status}`);
+      const data = await response.json() as { status?: string; analysis_configured?: boolean };
+      if (data.analysis_configured === false) {
+        setHealth("unconfigured");
+        setHealthMessage("The backend is reachable, but GEMINI_API_KEY is not configured on Render.");
+      } else {
+        setHealth("ok");
+        setHealthMessage("");
+      }
+    } catch (reason) {
+      const detail = reason instanceof Error ? reason.message : "Network request failed";
+      setHealth("unavailable");
+      setHealthMessage(`${detail}. The app calls the backend through its same-origin Vercel proxy. Check that NEXT_PUBLIC_API_URL is set to the Render service URL for this deployment environment, then redeploy.`);
+    } finally {
+      setHealthChecking(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void checkHealth();
+  }, [checkHealth]);
 
   useEffect(() => {
     if (!file) {
@@ -455,30 +468,44 @@ export default function Home() {
   const isDocx = file?.name.toLowerCase().endsWith(".docx");
 
   return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
-      <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-5 py-3 sm:px-8">
-        <div>
-          <div className="text-lg font-bold tracking-tight">Legal Copilot</div>
-          <div className="text-xs text-slate-500">Private, quote-grounded document review</div>
-        </div>
+    <main className="app-shell min-h-screen text-slate-900">
+      <header className="site-header flex min-h-16 flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
+        <a className="brand-lockup" href="#home" aria-label="Legal Copilot home">
+          <span className="brand-mark" aria-hidden="true">LC</span>
+          <span><span className="brand-name">Legal Copilot</span><span className="brand-caption">Evidence-led contract review</span></span>
+        </a>
         <div className="flex items-center gap-2">
+          <span className={`api-pill ${health === "ok" ? "api-pill-ok" : health === "checking" ? "api-pill-checking" : "api-pill-down"}`}><span className="api-dot" />{health === "ok" ? "API connected" : health === "checking" ? "Checking API" : "API needs attention"}</span>
           {sessionId && <button className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold hover:bg-slate-50 disabled:opacity-50" disabled={deleting} onClick={() => void purgeSession()} type="button">{deleting ? "Deleting…" : "Delete session"}</button>}
         </div>
       </header>
 
-      {health !== "ok" && <div role="status" className={`border-b px-5 py-3 text-sm ${health === "checking" ? "border-slate-200 bg-slate-50 text-slate-600" : "border-amber-300 bg-amber-50 text-amber-950"}`}>
-        {health === "checking" ? "Checking API availability…" : health === "unconfigured" ? healthMessage : `API unavailable: ${healthMessage || "health check failed"}`}
+      {health !== "ok" && <div role="status" className={`connection-banner ${health === "checking" ? "connection-banner-checking" : "connection-banner-alert"}`}>
+        <div><strong>{health === "checking" ? "Checking the analysis service" : health === "unconfigured" ? "Backend setup required" : "Could not connect to the analysis service"}</strong><p>{health === "checking" ? "Contacting the configured API endpoint…" : healthMessage || "The API health check failed."}</p></div>
+        {health !== "checking" && <button className="button button-secondary" disabled={healthChecking} onClick={() => void checkHealth()} type="button">{healthChecking ? "Checking…" : "Retry connection"}</button>}
       </div>}
 
       {error && <div role="alert" className="mx-4 mt-4 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-950 sm:mx-6">{error}</div>}
 
       {!sessionId ? (
-        <section className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Document review</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight">Review a legal document</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Upload a contract for clause-level risk analysis, source resolution, and a structured memorandum. Documents stay in volatile session memory and are purged when you delete or close the analysis.</p>
-            <form className="mt-7" onSubmit={startAnalysis}>
+        <section id="home" className="landing-grid mx-auto grid max-w-6xl items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:py-16">
+          <div className="landing-copy pt-2">
+            <p className="eyebrow"><span className="eyebrow-line" /> PRELIMINARY CONTRACT REVIEW</p>
+            <h1 className="hero-title">See the terms that deserve a closer look.</h1>
+            <p className="hero-description">Turn a contract into a structured, evidence-linked risk assessment for review with qualified counsel.</p>
+            <div className="feature-list">
+              <div className="feature-row"><span className="feature-icon">01</span><div><strong>Clause-level evidence</strong><p>Findings point back to quoted contract language and sections.</p></div></div>
+              <div className="feature-row"><span className="feature-icon">02</span><div><strong>Source checks with abstention</strong><p>Unloaded or unsupported legal sources are surfaced as gaps.</p></div></div>
+              <div className="feature-row"><span className="feature-icon">03</span><div><strong>Short-lived analysis session</strong><p>Uploaded content is handled in session memory and can be purged.</p></div></div>
+            </div>
+            <p className="trust-note"><span aria-hidden="true">◈</span> Not legal advice · Human review required · Do not upload sensitive documents unless provider terms allow it</p>
+          </div>
+
+          <div className="upload-column">
+          <div className="upload-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="upload-heading"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-800">Start a review</p><h2 className="mt-2 text-2xl font-bold tracking-tight">Upload your document</h2></div><span className="file-limit">UP TO 25 MB</span></div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">PDF, DOCX, text files, or scanned court documents. The analysis trace and report appear when processing completes.</p>
+            <form className="mt-6" onSubmit={startAnalysis}>
               <div
                 className={`rounded-xl border-2 border-dashed p-8 text-center transition ${dragging ? "border-emerald-600 bg-emerald-50" : "border-slate-300 bg-slate-50"}`}
                 onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
@@ -498,13 +525,14 @@ export default function Home() {
               </div>
               {error && !sessionId && <p className="mt-3 text-sm text-rose-800">{error}</p>}
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs leading-5 text-slate-500">Do not upload documents unless your provider settings permit the required data handling.</p>
-                <button className="rounded-lg bg-emerald-800 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-40" disabled={!file || working || health !== "ok"} type="submit">{working ? "Starting…" : "Start analysis"}</button>
+                <p className="max-w-xs text-xs leading-5 text-slate-500">External AI and research providers may process document content. Review provider data terms before uploading.</p>
+                <button className="rounded-lg bg-emerald-800 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-40" disabled={!file || working || health !== "ok"} type="submit">{working ? "Starting review…" : "Start review"}<span className="ml-2" aria-hidden="true">→</span></button>
               </div>
             </form>
           </div>
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="citation-card mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
             <CitationCheckPanel value={verifyInput} setValue={setVerifyInput} onSubmit={testCitation} loading={verifyLoading} error={verifyError} probe={probe} />
+          </div>
           </div>
         </section>
       ) : (
