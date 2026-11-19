@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent, DragEvent, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 const CONFIGURED_API = (process.env.NEXT_PUBLIC_API_URL || "").trim().replace(/\/$/, "");
 const API = process.env.NODE_ENV === "development"
@@ -47,6 +48,43 @@ function StatusPill({ status }: { status: Risk["severity"] }) {
     low: "border-slate-300 bg-slate-50 text-slate-700",
   };
   return <span className={`rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wide ${styles[status]}`}>{status}</span>;
+}
+
+function downloadRiskReport(review: RiskReview) {
+  const sections = review.risks.map((risk, index) => [
+    `${index + 1}. ${risk.title}`,
+    `Severity: ${risk.severity.toUpperCase()}`,
+    `Sections: ${risk.clause_refs.map((item) => `${item.section} (${item.id})${item.page ? `, page ${item.page}` : ""}`).join("; ") || "Not identified"}`,
+    "Contract evidence:",
+    ...risk.exact_quotes.map((quote) => `  “${quote}”`),
+    `Why it may matter: ${risk.why_non_obvious}`,
+    `Suggested action: ${risk.suggested_action}`,
+  ].join("\n")).join("\n\n");
+  const report = [
+    "LEGAL COPILOT",
+    "PRELIMINARY CONTRACT RISK ASSESSMENT",
+    "=".repeat(42),
+    `Document: ${review.document_name}`,
+    `Assessment: ${review.risks.length} potential risk${review.risks.length === 1 ? "" : "s"} identified; no legal violation established.`,
+    "",
+    "RISK FINDINGS",
+    "-".repeat(42),
+    sections || "No quote-grounded risks were identified in the reviewed text.",
+    review.warnings.length ? `\n\nREVIEW NOTES\n${review.warnings.map((warning) => `- ${warning}`).join("\n")}` : "",
+    "",
+    "This report does not establish an actual violation or provide a final legal opinion.",
+    review.notice,
+  ].filter(Boolean).join("\n");
+  const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeName = review.document_name.replace(/[^a-z0-9._-]+/gi, "_").replace(/^_+|_+$/g, "") || "document";
+  link.href = url;
+  link.download = `${safeName}-risk-assessment.txt`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 export default function Home() {
@@ -212,8 +250,8 @@ export default function Home() {
   return <main className="min-h-screen bg-[#f5f8f6] text-slate-900">
     <header className="sticky top-0 z-10 flex h-[68px] items-center justify-between border-b border-emerald-950/10 bg-white px-5 sm:px-8">
       <a href="#home" className="flex items-center gap-3" aria-label="Legal Copilot home">
-        <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-900 text-xs font-extrabold text-white shadow-sm">LC</span>
-        <span><strong className="block text-sm">Legal Copilot</strong><span className="text-xs text-slate-500">Contract risk review</span></span>
+        <Image src="/legal-copilot-logo.webp" alt="" width={48} height={48} priority className="h-11 w-11 object-contain" />
+        <span><strong className="block text-base">Legal Copilot</strong><span className="text-xs text-slate-500">Contract risk review</span></span>
       </a>
       <div className="flex items-center gap-3">
         <span className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${health === "ready" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>{health === "ready" ? "● Service ready" : health === "checking" ? "Checking service" : "Service unavailable"}</span>
@@ -251,8 +289,9 @@ export default function Home() {
         {busy && <p role="status" className="mt-4 flex items-center gap-2 text-sm font-medium text-emerald-900"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-600" />{progress}</p>}
       </section>
 
-      {review && <section aria-live="polite" className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-2"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Risk findings</p><h2 className="mt-1 text-xl font-bold">{review.risks.length} potential risk{review.risks.length === 1 ? "" : "s"} found</h2></div><p className="max-w-sm truncate text-xs text-slate-500">{review.document_name}</p></div>
+      {review && <section id="risk-report" aria-live="polite" className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-4"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Preliminary contract risk assessment</p><h2 className="mt-1 text-2xl font-bold">{review.risks.length} potential risk{review.risks.length === 1 ? "" : "s"} identified</h2><p className="mt-1 text-sm text-slate-600">Potential risks found; no legal violation established.</p><p className="mt-2 max-w-xl break-words text-sm text-slate-500">Document: {review.document_name}</p></div><div className="screen-only flex flex-wrap gap-2"><button type="button" onClick={() => downloadRiskReport(review)} className="rounded-lg bg-emerald-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-800">Download report</button><button type="button" onClick={() => window.print()} className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">Print / save PDF</button></div></div>
+        {review.risks.length === 0 && <p className="rounded-lg bg-slate-50 p-4 text-sm leading-6 text-slate-700">No risks passed the exact-quote checks. The system has not added unsupported findings.</p>}
         {review.risks.map((risk) => <article key={risk.risk_id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3"><h3 className="max-w-3xl text-lg font-bold">{risk.title}</h3><StatusPill status={risk.severity} /></div>
           <p className="mt-3 text-sm leading-6 text-slate-700"><strong>Sections:</strong> {risk.clause_refs.map((item) => `${item.section} (${item.id})${item.page ? `, page ${item.page}` : ""}`).join("; ")}</p>
@@ -261,7 +300,7 @@ export default function Home() {
           <p className="mt-3 text-sm leading-6 text-slate-700"><strong>Suggested action:</strong> {risk.suggested_action}</p>
         </article>)}
         {review.warnings.map((warning, index) => <p key={index} className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">{warning}</p>)}
-        <p className="border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500">{review.notice}</p>
+        <div className="border-t border-slate-200 pt-4 text-xs leading-5 text-slate-500"><p>This report does not establish an actual violation or provide a final legal opinion.</p><p className="mt-1">{review.notice}</p></div>
       </section>}
 
       {!review && !busy && <p className="text-xs leading-5 text-slate-500">Findings are based on the document text and may depend on facts or jurisdiction. Review important terms with qualified counsel.</p>}

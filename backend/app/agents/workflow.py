@@ -73,6 +73,16 @@ def _research_query_for_risk(risk: dict, jurisdiction: dict) -> str:
 _SCAN_BATCH_SIZE = 32
 _CROSS_PAIR_LIMIT = 36
 _CROSS_PAIR_BATCH_SIZE = 8
+_RISK_REVIEW_MAX_CHARS = 9_000
+_RISK_REVIEW_TOPICS = {
+    "liability": re.compile(r"\b(?:liabilit\w*|indemnif\w*|cap(?:ped)?|damages|losses|limitation)\b", re.I),
+    "term_exit": re.compile(r"\b(?:renew\w*|terminat\w*|expir\w*|notice period|successive term|cure period)\b", re.I),
+    "privacy_security": re.compile(r"\b(?:data|privacy|personal information|personal data|security|incident|breach|processor|subcontractor)\b", re.I),
+    "ip": re.compile(r"\b(?:intellectual property|work product|assignment|assigns?|deliverables?|inventions?|license)\b", re.I),
+    "payment_service": re.compile(r"\b(?:payment|fees|invoice|service level|warrant\w*|availability|suspension|credit)\b", re.I),
+    "change_control": re.compile(r"\b(?:amend\w*|modify|change|discretion|audit|inspection|records)\b", re.I),
+    "disputes_law": re.compile(r"\b(?:governing law|applicable law|jurisdiction|venue|arbitrat\w*|class action|dispute)\b", re.I),
+}
 _CROSS_TOPIC_PATTERNS = {
     "exposure": re.compile(r"\b(?:liabilit\w*|indemnif\w*|cap|carve[- ]out|damages|losses)\b", re.I),
     "term_lifecycle": re.compile(r"\b(?:renew\w*|terminat\w*|expir\w*|notice period|successive term)\b", re.I),
@@ -81,6 +91,57 @@ _CROSS_TOPIC_PATTERNS = {
     "intellectual_property": re.compile(r"\b(?:intellectual property|work product|assignment|assigns?|deliverables?|inventions?)\b", re.I),
     "assurance": re.compile(r"\b(?:audit|inspection|attestation|certification|security controls|evidence of compliance)\b", re.I),
 }
+
+
+def _select_risk_review_clauses(clauses: list[dict], max_chars: int = _RISK_REVIEW_MAX_CHARS) -> list[dict]:
+    """Choose a diverse, bounded set of relevant clauses without truncating quote sources."""
+    if sum(len(str(c.get("heading", ""))) + len(str(c.get("text", ""))) for c in clauses) <= max_chars:
+        return clauses
+
+    ranked: list[tuple[int, int, dict, set[str]]] = []
+    topic_hits: dict[str, list[tuple[int, dict]]] = {topic: [] for topic in _RISK_REVIEW_TOPICS}
+    for index, clause in enumerate(clauses):
+        content = f"{clause.get('heading', '')}\n{clause.get('text', '')}"
+        topics = {topic for topic, pattern in _RISK_REVIEW_TOPICS.items() if pattern.search(content)}
+        score = sum(len(pattern.findall(content)) for pattern in _RISK_REVIEW_TOPICS.values())
+        ranked.append((score, index, clause, topics))
+        for topic in topics:
+            topic_hits[topic].append((score, clause))
+
+    selected_ids: set[str] = set()
+    selected: list[dict] = []
+    chars_used = 0
+
+    def add(clause: dict) -> bool:
+        nonlocal chars_used
+        key = str(clause.get("id", id(clause)))
+        size = len(json.dumps({"id": clause.get("id"), "section": clause.get("heading"), "page": clause.get("page"), "text": clause.get("text", "")}, ensure_ascii=False))
+        if key in selected_ids or chars_used + size > max_chars:
+            return False
+        selected_ids.add(key)
+        selected.append(clause)
+        chars_used += size
+        return True
+
+    # Reserve representation across topics first so a long document's opening
+    # sections cannot crowd out later privacy, exit, IP, or dispute provisions.
+    for topic in _RISK_REVIEW_TOPICS:
+        candidates = sorted(topic_hits[topic], key=lambda item: item[0], reverse=True)
+        if candidates:
+            add(candidates[0][1])
+
+    # Then fill remaining capacity with clauses that contain the most topic evidence.
+    for _score, _index, clause, _topics in sorted(ranked, key=lambda item: item[0], reverse=True):
+        add(clause)
+
+    # If no topic terms were found, sample from across the document rather than
+    # silently analyzing only its first page.
+    if not selected:
+        stride = max(1, len(clauses) // 12)
+        for clause in clauses[::stride]:
+            add(clause)
+
+    return sorted(selected, key=lambda clause: clauses.index(clause))
 _CROSS_TOPIC_LINKS = {
     frozenset({"exposure"}), frozenset({"term_lifecycle"}),
     frozenset({"privacy_security"}), frozenset({"jurisdiction", "privacy_security"}),
@@ -491,6 +552,7 @@ class LegalWorkflow:
             state.setdefault("warnings", []).append("No readable clauses were extracted, so risks could not be assessed.")
             return state
 
+        review_clauses = _select_risk_review_clauses(clauses)
         clause_rows = [
             {
                 "id": clause.get("id"),
@@ -498,7 +560,7 @@ class LegalWorkflow:
                 "page": clause.get("page"),
                 "text": clause.get("text", ""),
             }
-            for clause in clauses
+            for clause in review_clauses
         ]
         prompt = f'''Review the supplied contract clauses and identify the three most important non-obvious contractual or compliance risks, if the text supports three. Return fewer when fewer are supported; never invent a risk just to reach three. Do not perform legal research and do not include laws, cases, statute names, or citations. Return only JSON matching SimpleRiskScan. For each finding provide: a concise issue title; severity; every clause ID materially involved; one exact verbatim quotation from each cited clause (do not rewrite the quotation); why the interaction or wording may be easy to miss; and one practical suggested action. A cross-clause risk must list every involved clause ID and include a separate exact quote from each. Do not state that a law was violated, that a party is compliant, or give a final legal conclusion. Use conditional language (may/could). If fewer than three risks are supported, explain why in warnings. Jurisdiction context: {json.dumps(state.get('jurisdiction', {}), ensure_ascii=False)}\nClauses: {json.dumps(clause_rows, ensure_ascii=False)}'''
         scan = await self._call(prompt, SimpleRiskScan)
@@ -528,6 +590,10 @@ class LegalWorkflow:
         grounded = [grounded_by_id[item.risk_id] for item in converted if item.risk_id in grounded_by_id]
         state["risks"] = [item.model_dump() for item in grounded]
         state.setdefault("warnings", []).extend(scan.warnings)
+        if len(review_clauses) < len(clauses):
+            state.setdefault("warnings", []).append(
+                f"To fit provider limits, the risk scan reviewed {len(review_clauses)} of {len(clauses)} extracted clauses selected by general issue relevance. Other clauses were not assessed."
+            )
         if len(grounded) < 3:
             state.setdefault("warnings", []).append(
                 f"Only {len(grounded)} risk(s) passed exact-quote and clause checks; no additional risks were invented."

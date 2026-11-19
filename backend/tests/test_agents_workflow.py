@@ -1,3 +1,5 @@
+import json
+
 from app.agents.risk_models import DraftMemo, RiskFinding, RiskScan, SimpleRiskFinding, SimpleRiskScan, VisionExtraction
 from app.agents.workflow import LegalWorkflow, _source_grounded_claims
 from app.config import settings
@@ -143,6 +145,32 @@ def test_simple_risk_scan_drops_unverifiable_quote_instead_of_filling_three():
 
     assert result["risks"] == []
     assert any("no additional risks were invented" in item for item in result["warnings"])
+
+
+def test_risk_review_clause_selection_is_bounded_and_topic_diverse():
+    from app.agents.workflow import _select_risk_review_clauses
+
+    clauses = [
+        {"id": f"C{i}", "heading": f"Section {i}", "text": f"General operational terms {i}. " + ("ordinary contract wording " * 18)}
+        for i in range(1, 31)
+    ]
+    clauses[2]["text"] += " Liability cap and indemnity obligations."
+    clauses[8]["text"] += " Customer data privacy and security incident."
+    clauses[15]["text"] += " Automatic renewal and termination notice period."
+    clauses[24]["text"] += " Intellectual property assignment of work product."
+    budget = 2_500
+
+    selected = _select_risk_review_clauses(clauses, max_chars=budget)
+    selected_size = sum(len(json.dumps({"id": c.get("id"), "section": c.get("heading"), "page": c.get("page"), "text": c.get("text", "")}, ensure_ascii=False)) for c in selected)
+
+    assert selected
+    assert len(selected) < len(clauses)
+    assert selected_size <= budget
+    selected_text = " ".join(c["text"] for c in selected).casefold()
+    assert "liability cap" in selected_text
+    assert "customer data privacy" in selected_text
+    assert "automatic renewal" in selected_text
+    assert "intellectual property assignment" in selected_text
 
 
 def test_unverbatim_risk_quote_is_dropped():
