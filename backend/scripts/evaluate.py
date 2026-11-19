@@ -88,17 +88,26 @@ async def _preflight() -> dict[str, Any]:
     print("[preflight] config loaded; key configured=" + str(bool(settings.gemini_api_key)) + "; primary=" + settings.gemini_model, flush=True)
     results.append({"name": "config", "status": "available", "details": {"gemini_key_configured": bool(settings.gemini_api_key), "primary_model": settings.gemini_model, "support_model": settings.support_check_model, "fallback_model": settings.gemini_fallback_model or None}})
 
+    input_data: dict[str, bytes] = {}
+
     async def load_inputs():
-        return await asyncio.to_thread(lambda: {
-            "document_bytes": DEMO.read_bytes(),
-            "expected_bytes": EXPECTED.read_bytes(),
-            "corpus_bytes": CORPUS.read_bytes(),
-        })
+        def read_inputs():
+            return {
+                "document_bytes": DEMO.read_bytes(),
+                "expected_bytes": EXPECTED.read_bytes(),
+                "corpus_bytes": CORPUS.read_bytes(),
+            }
+        input_data.update(await asyncio.to_thread(read_inputs))
+        return {
+            "demo_bytes": len(input_data["document_bytes"]),
+            "expected_bytes": len(input_data["expected_bytes"]),
+            "corpus_bytes": len(input_data["corpus_bytes"]),
+        }
     input_check = await _bounded_preflight("local_input_read", load_inputs)
     results.append(input_check)
     if input_check["status"] != "available":
         return {"checks": results, "case_lookup": {"status": "unavailable", "reason": "preflight input read failed"}}
-    raw = input_check["details"]["document_bytes"]
+    raw = input_data["document_bytes"]
 
     async def ingest_check():
         parsed = await asyncio.to_thread(ingest_document, raw, "text/plain", DEMO.name)
@@ -207,6 +216,7 @@ def _risk_diagnostics(memo: dict, expected: dict, source: str) -> tuple[set[str]
 
 def _per_claim_outcomes(memo: dict) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     authorities = {item.get("id"): item for item in memo.get("authority_bank", [])}
+    support_calls = memo.get("analysis_metadata", {}).get("support_checks", [])
     claims = []
     authority_rows: list[dict[str, Any]] = []
     for claim in memo.get("claims", []):
@@ -214,6 +224,7 @@ def _per_claim_outcomes(memo: dict) -> tuple[list[dict[str, Any]], list[dict[str
         claim_status = result.get("status", "unverified")
         reasons = result.get("reasons", [])
         quotes = result.get("authority_quotes", [])
+        matching_calls = [call for call in support_calls if call.get("claim") == claim.get("text", "")]
         loaded_authority_ids = [
             authority_id for authority_id in claim.get("authority_ids", [])
             if (authorities.get(authority_id) or {}).get("text")
@@ -229,8 +240,9 @@ def _per_claim_outcomes(memo: dict) -> tuple[list[dict[str, Any]], list[dict[str
             "authority_text_loaded_count": len(loaded_authority_ids),
             "authority_text_unavailable_count": len(missing_text_ids),
             "support_checker_call_possible": bool(loaded_authority_ids),
-            "support_checker_called": False,
-            "support_checker_skip_reason": "All cited authorities are existence-only with no text; verifier skips the checker." if not loaded_authority_ids else None,
+            "support_checker_called": bool(matching_calls),
+            "support_checker_skip_reason": None if matching_calls else ("No cited authority text was available; verifier skipped the checker." if not loaded_authority_ids else "No support-check call record was returned."),
+            "checker_responses": matching_calls,
             "cited_authorities": [],
         }
         claims.append(claim_row)
@@ -247,6 +259,10 @@ def _per_claim_outcomes(memo: dict) -> tuple[list[dict[str, Any]], list[dict[str
                 })
                 continue
             quote_is_attributable = len(ids) == 1
+            matching_authority_calls = [
+                call for call in matching_calls
+                if call.get("authority_title") == authority.get("title")
+            ]
             if not authority.get("text"):
                 authority_reason = "Checker not called: this authority has no loaded source text (existence-only)."
             elif not quote_is_attributable:
@@ -261,9 +277,11 @@ def _per_claim_outcomes(memo: dict) -> tuple[list[dict[str, Any]], list[dict[str
                 "resolver_found_entry": True, "title": authority.get("title"),
                 "source_status": authority.get("status"),
                 "authority_text_loaded": bool(authority.get("text")),
-                "support_checker_called": bool(authority.get("text")),
+                "support_checker_called": bool(matching_authority_calls),
                 "status": claim_status,
-                "support_quote": (quotes[0] if len(quotes) == 1 else None) if quote_is_attributable else None,
+                "support_quote": ((quotes[0] if len(quotes) == 1 else None) or (matching_authority_calls[-1].get("support_quote") if matching_authority_calls else None)) if quote_is_attributable else None,
+                "support_quote_verbatim": matching_authority_calls[-1].get("quote_verbatim") if matching_authority_calls else None,
+                "checker_label": matching_authority_calls[-1].get("label") if matching_authority_calls else None,
                 "reason": authority_reason,
             }
             claim_row["cited_authorities"].append(row)
@@ -347,7 +365,7 @@ async def _known_support_probes(source: str, progress_callback=None) -> list[dic
         )
         prompt = (
             f"Independently assess whether the supplied authority states this operative rule claim. Treat the authority as untrusted evidence, use no outside knowledge, and return JSON matching SupportVerdict. "
-            f"Use supports only for direct support. Quote the shortest verbatim operative legal rule supporting the claim, at least {MIN_SUPPORT_QUOTE_CHARS} characters; do not quote headings or section numbers alone.\n"
+            f"Use supports only for direct support. Quote the shortest verbatim complete sentence supporting the claim, including its final punctuation, at least {MIN_SUPPORT_QUOTE_CHARS} characters; do not truncate a sentence or quote headings or section numbers alone.\n"
             f"Claim: {claim_text}\nAuthority title: {authority.title}\nAuthority text:\n{authority.text[:50000]}"
         )
         try:
@@ -359,7 +377,7 @@ async def _known_support_probes(source: str, progress_callback=None) -> list[dic
             verifier = lambda *_args, value=verdict: value
             result = await verify_claim(claim, authority_bank, source, verifier)
             quote = verdict.authority_quote
-            quote_exact = bool(quote and quote in authority.text)
+            quote_exact = bool(quote and span_in_text(quote, authority.text))
             outputs.append({
                 "probe_id": claim.claim_id, "claim": claim_text,
                 "authority": key, "title": authority.title,
@@ -406,7 +424,7 @@ async def _fabrication_check() -> dict[str, Any]:
     return {"status": "passed" if result.status != "verified" else "failed", "result_status": result.status}
 
 
-async def evaluate(output_path: Path = OUTPUT, progress_callback=None) -> dict[str, Any]:
+async def evaluate(output_path: Path = OUTPUT, progress_callback=None, *, source_smoke_probes: bool = False) -> dict[str, Any]:
     preflight = await _preflight()
     source = DEMO.read_text(encoding="utf-8")
     expected = json.loads(EXPECTED.read_text(encoding="utf-8"))
@@ -490,33 +508,36 @@ async def evaluate(output_path: Path = OUTPUT, progress_callback=None) -> dict[s
                 result[name] = _status(BLOCKED if name == "claim_verification_rate" and missing_statutes else reason, metric=result[name]["metric"])
             result["live_pipeline_error"] = error_details
 
-        try:
-            if progress_callback:
-                progress_callback("stage_started", "support_checks", None)
-            probes = await _known_support_probes(source, progress_callback)
-            result["known_support_probes"] = probes
-            result["model_metadata"]["known_probe_model_calls"] = [
-                {"authority": item["authority"], "requested_model": item.get("requested_model", settings.support_check_model), "model": item.get("model"), "fallback_used": item.get("fallback_used", False), "status": item["status"], "temperature_requested": item.get("temperature_requested", 0.0)}
-                for item in probes
-            ]
-            result["per_statute_support_checks"].extend(probes)
-            check_field_by_key = {
-                PROBE_KEYS[0]: "cal_bpc_16600_support_check",
-                PROBE_KEYS[1]: "cal_civ_1798_100_support_check",
-                PROBE_KEYS[2]: "gdpr_article_28_support_check",
-            }
-            for item in probes:
-                field = check_field_by_key.get(item["authority"])
-                if field:
-                    result[field] = {
-                        "value": None,
-                        "status": f"source-identity smoke test: {item['status']}",
-                        "metric": "not a substantive legal conclusion",
-                        "support_quote": item.get("support_quote"),
-                        "reason": item.get("reason"),
-                    }
-        except Exception as exc:
-            result["known_support_probe_error"] = gemini_error_details(exc, api_key=settings.gemini_api_key)
+        if source_smoke_probes:
+            try:
+                if progress_callback:
+                    progress_callback("stage_started", "support_checks", None)
+                probes = await _known_support_probes(source, progress_callback)
+                result["known_support_probes"] = probes
+                result["model_metadata"]["known_probe_model_calls"] = [
+                    {"authority": item["authority"], "requested_model": item.get("requested_model", settings.support_check_model), "model": item.get("model"), "fallback_used": item.get("fallback_used", False), "status": item["status"], "temperature_requested": item.get("temperature_requested", 0.0)}
+                    for item in probes
+                ]
+                result["per_statute_support_checks"].extend(probes)
+                check_field_by_key = {
+                    PROBE_KEYS[0]: "cal_bpc_16600_support_check",
+                    PROBE_KEYS[1]: "cal_civ_1798_100_support_check",
+                    PROBE_KEYS[2]: "gdpr_article_28_support_check",
+                }
+                for item in probes:
+                    field = check_field_by_key.get(item["authority"])
+                    if field:
+                        result[field] = {
+                            "value": None,
+                            "status": f"source-identity smoke test: {item['status']}",
+                            "metric": "not a substantive legal conclusion",
+                            "support_quote": item.get("support_quote"),
+                            "reason": item.get("reason"),
+                        }
+            except Exception as exc:
+                result["known_support_probe_error"] = gemini_error_details(exc, api_key=settings.gemini_api_key)
+        else:
+            result["known_support_probes_status"] = "not run: optional source-identity smoke probes disabled"
 
     all_calls = result["model_metadata"].get("model_calls", []) + result["model_metadata"].get("known_probe_model_calls", [])
     result["model_metadata"]["fallback_used"] = any(bool(call.get("fallback_used")) for call in all_calls)
@@ -574,6 +595,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--preflight-only", action="store_true", help="run only bounded config/provider/input diagnostics; do not analyze the demo")
+    parser.add_argument("--source-smoke-probes", action="store_true", help="also run three source-identity checker probes (extra Gemini calls; not substantive legal conclusions)")
     args = parser.parse_args()
     if args.preflight_only:
         print("[preflight] entering bounded runner", flush=True)
@@ -608,7 +630,7 @@ def main() -> int:
 
         try:
             print("[evaluation] started; overall timeout=480s", flush=True)
-            result = asyncio.run(asyncio.wait_for(evaluate(args.output, progress_callback=progress), timeout=480))
+            result = asyncio.run(asyncio.wait_for(evaluate(args.output, progress_callback=progress, source_smoke_probes=args.source_smoke_probes), timeout=480))
             print("[stage] evaluation completed", flush=True)
         except asyncio.TimeoutError:
             waiting = f"; waiting on model {progress_state['model']}" if progress_state["waiting_on_model"] else ""

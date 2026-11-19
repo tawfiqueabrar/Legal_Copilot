@@ -64,6 +64,7 @@ type Memo = {
   methodology: string;
   notice: string;
   footer: string;
+  document_facts?: { document_kind?: string; parties?: string[]; deadlines?: string[] };
 };
 type AgentStep = { id: string; label: string; status: "waiting" | "running" | "done" | "failed"; summary?: string };
 type CitationProbe = { citation: string; normalized_key?: string | null; result: { status: Status; reasons: string[]; authority_quotes: string[] }; authority?: Authority | null };
@@ -251,8 +252,8 @@ export default function Home() {
     setError("");
     if (!candidate) return;
     const extension = candidate.name.toLowerCase().split(".").pop();
-    if (!extension || !["txt", "pdf", "docx"].includes(extension)) {
-      setError("Choose a .txt, .pdf, or .docx document.");
+    if (!extension || !["txt", "pdf", "docx", "png", "jpg", "jpeg", "tif", "tiff"].includes(extension)) {
+      setError("Choose a .txt, .pdf, .docx, .png, .jpg, .jpeg, .tif, or .tiff document.");
       return;
     }
     if (candidate.size > MAX_UPLOAD_BYTES) {
@@ -278,6 +279,16 @@ export default function Home() {
         status: index < currentIndex ? "done" : index === currentIndex ? "running" : item.status,
         summary: index === currentIndex ? summary : item.summary,
       }));
+    });
+  };
+
+  const setStepFailed = (node: string, summary: string) => {
+    setSteps((previous) => {
+      const index = previous.findIndex((item) => item.id === node);
+      if (index < 0) return previous.map((item) => item.status === "running" ? { ...item, status: "failed", summary } : item);
+      return previous.map((item, current) => current < index
+        ? { ...item, status: "done" }
+        : current === index ? { ...item, status: "failed", summary } : item);
     });
   };
 
@@ -307,8 +318,11 @@ export default function Home() {
         setStepProgress(node, String(payload.summary || payload.message || "Working"));
       } else if (event === "result") {
         gotResult = true;
+        setSteps((previous) => previous.map((item) => ({ ...item, status: "done", summary: item.summary || "Completed" })));
       } else if (event === "error") {
-        throw new Error(apiError(payload, "Analysis failed. Check the API configuration and try again."));
+        const message = apiError(payload, "Analysis failed. Check the API configuration and try again.");
+        setStepFailed(String(payload.stage || ""), message);
+        throw new Error(message);
       }
     };
     while (true) {
@@ -475,10 +489,10 @@ export default function Home() {
               >
                 <div aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-white text-xl text-emerald-800 shadow-sm">↑</div>
                 <p className="mt-4 font-semibold">Drop a document here</p>
-                <p className="mt-1 text-sm text-slate-500">PDF, DOCX, or plain text · maximum 25 MB</p>
+                <p className="mt-1 text-sm text-slate-500">PDF, DOCX, scanned PNG/JPEG/TIFF, or plain text · maximum 25 MB</p>
                 <label className="mt-5 inline-flex cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold hover:bg-slate-50">
                   Browse files
-                  <input accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="sr-only" onChange={onInputChange} type="file" />
+                  <input accept=".txt,.pdf,.docx,.png,.jpg,.jpeg,.tif,.tiff,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/tiff" className="sr-only" onChange={onInputChange} type="file" />
                 </label>
                 {file && <p className="mt-4 break-all text-sm font-medium text-emerald-900">Selected: {file.name} · {(file.size / (1024 * 1024)).toFixed(2)} MB</p>}
               </div>
@@ -552,6 +566,7 @@ export default function Home() {
                 </section>
 
                 <section>
+                  {memo.document_facts && <div className="mb-4 rounded-lg border border-sky-200 bg-sky-50 p-3"><SectionLabel>Vision-extracted document details</SectionLabel><p className="mt-1 text-xs text-slate-700">Document type: {memo.document_facts.document_kind || "unspecified"}</p>{memo.document_facts.parties?.length ? <div className="mt-2 text-xs"><p className="font-semibold">Extracted parties</p><ul className="list-disc pl-5">{memo.document_facts.parties.map((party, index) => <li key={index}>{party}</li>)}</ul></div> : null}{memo.document_facts.deadlines?.length ? <div className="mt-2 text-xs"><p className="font-semibold">Potential deadlines to confirm</p><ul className="list-disc pl-5">{memo.document_facts.deadlines.map((deadline, index) => <li key={index}>{deadline}</li>)}</ul></div> : null}<p className="mt-2 text-[11px] text-slate-600">Vision extraction may be incomplete. Confirm all parties and dates against the original image.</p></div>}
                   <div className="flex items-center justify-between"><SectionLabel>Risk findings</SectionLabel><span className="text-xs text-slate-500">{memo.risks.length} quote-grounded</span></div>
                   {memo.risks.length ? memo.risks.map((risk) => <article className="mt-3 rounded-xl border border-slate-200 p-4" key={risk.risk_id}>
                     <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="font-bold">{risk.title}</h3><span className="rounded-full border border-orange-300 bg-orange-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-orange-950">{risk.severity}</span></div>

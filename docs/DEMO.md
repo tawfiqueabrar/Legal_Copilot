@@ -1,10 +1,12 @@
 # Legal Copilot: 3-minute demo
 
+Use [SUBMISSION_BRIEF.md](SUBMISSION_BRIEF.md) for judging-criterion mapping and the complete pitch script.
+
 ## Before the demo
 
 Start FastAPI from `backend` and Next.js from `frontend`. Confirm the UI health banner says the API is available. Analysis also needs a server-side Gemini key. Citation lookups may require network access. Do not use a client contract; use only `demo/sample_msa.txt`.
 
-**Current accuracy gate:** the corpus includes text for California B&P § 16600, California Civil Code § 1798.100, and GDPR Article 33. A loaded source does not itself make a claim Verified: use only the exact backend status returned for each claim. The current evaluator run has no executed support-check calls, so it supplies no Verified badge for those checks.
+**Accuracy gate:** the recorded live baseline predates the current source-grounded memo-generation change. It recorded six claims; one received Verified. Do not present those values as performance of the latest code. Never promise or stage a Verified badge. If the application displays one during the demo, confirm its backend status and show the exact authority and support quote. The source-identity smoke tests in eval_results.json are not substantive legal conclusions.
 
 ## Run of show
 
@@ -26,7 +28,7 @@ Enter `999 U.S. 999` in “Test a citation.” The closed-set verifier should re
 
 ### 2:30–3:00 — Evaluation and purge
 
-Open `backend/eval_results.json` or the recorded evaluation table in the README. The recorded run used `gemini-3.1-flash-lite` and reports 25.0% risk recall, 0.0% cross-clause recall, 100.0% quote grounding, 100.0% citation precision, and 0.0% claim verification. Per-statute support-check rows say not run because the evaluator does not isolate those outcomes. Finish by choosing “Delete session” and show the analysis view clear after the API purge succeeds.
+If you show `backend/eval_results.json`, label it clearly as the earlier live baseline, not the current code. It used `gemini-3.1-flash-lite` (temperature 0 requested; no fallback): strict risk recall 6/8, section-match recall 8/8, cross-clause recall 3/5, quote grounding 50/50, distinct authority IDs found in bank 5/5, claim verification 1/6, and the fabrication test rejected `999 U.S. 999`. Bank membership does not show legal relevance or support. The current memo-generation change has not had a live evaluation. A separate `gemini-3.6-flash` trial was not scoreable because analysis returned HTTP 503 and then HTTP 429 free-tier quota errors. Finish by choosing “Delete session” and show the analysis view clear after the API purge succeeds.
 
 ## Fallback path
 

@@ -1,48 +1,1037 @@
 {
   "run_mode": "live",
-  "timed_out_stage": "setup/preflight (no stage event recorded)",
-  "timed_out_waiting_on_model": false,
   "model_metadata": {
-    "configured_primary": "gemini-3.6-flash",
-    "configured_support_checker": "gemini-3.6-flash",
-    "configured_fallback": "gemini-3.1-flash-lite",
+    "configured_primary": "gemini-3.1-flash-lite",
+    "configured_support_checker": "gemini-3.1-flash-lite",
+    "configured_fallback": null,
     "temperature_requested": 0.0,
-    "model_calls": [],
+    "model_calls": [
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "RiskScan",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "DraftMemo",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      },
+      {
+        "result_schema": "SupportVerdict",
+        "requested_model": "gemini-3.1-flash-lite",
+        "model": "gemini-3.1-flash-lite",
+        "fallback_used": false,
+        "status": "completed"
+      }
+    ],
+    "known_probe_model_calls": [],
     "fallback_used": false
   },
-  "matching_rule": "Strict quote-anchor recall requires expected section overlap and quote-anchor overlap; section-match recall requires section overlap only; cross-clause strict recall also requires two distinct clause IDs.",
+  "preflight": {
+    "checks": [
+      {
+        "name": "config",
+        "status": "available",
+        "details": {
+          "gemini_key_configured": true,
+          "primary_model": "gemini-3.1-flash-lite",
+          "support_model": "gemini-3.1-flash-lite",
+          "fallback_model": null
+        }
+      },
+      {
+        "name": "local_input_read",
+        "status": "available",
+        "elapsed_seconds": 0.019,
+        "details": {
+          "demo_bytes": 15106,
+          "expected_bytes": 1789,
+          "corpus_bytes": 191774
+        }
+      },
+      {
+        "name": "document_ingestion",
+        "status": "available",
+        "elapsed_seconds": 0.002,
+        "details": {
+          "characters": 15106,
+          "clauses": 70
+        }
+      },
+      {
+        "name": "local_citation_verification",
+        "status": "available",
+        "elapsed_seconds": 0.001,
+        "details": {
+          "status": "passed",
+          "result_status": "rejected"
+        }
+      },
+      {
+        "name": "gemini_json_probe",
+        "status": "available",
+        "elapsed_seconds": 3.966,
+        "details": {
+          "status": "ok",
+          "requested_model": "gemini-3.1-flash-lite",
+          "actual_model": "gemini-3.1-flash-lite",
+          "fallback_used": false
+        }
+      },
+      {
+        "name": "courtlistener_case_lookup",
+        "status": "available",
+        "elapsed_seconds": 2.077,
+        "details": {
+          "http_status": 200,
+          "case_lookup_available": true
+        }
+      }
+    ],
+    "case_lookup": {
+      "status": "available"
+    }
+  },
+  "case_lookup": {
+    "status": "available"
+  },
+  "demo_file": "demo/sample_msa.txt",
+  "matching_rule": "Strict quote-anchor recall: expected section overlap AND exact quote-anchor overlap (whitespace/case/smart-quote normalization only). Section-match recall: expected section overlap regardless of quote. Cross-clause strict recall: strict quote-anchor match plus at least two distinct referenced clause IDs.",
+  "expected_risk_document_checks": [
+    {
+      "planted_risk_id": "unlimited_indemnity_bypass",
+      "sections_found": {
+        "9.3": true,
+        "9.4": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "broad_customer_data_definition",
+      "sections_found": {
+        "1.1": true,
+        "7.1": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "renewal_and_termination_asymmetry",
+      "sections_found": {
+        "5.2": true,
+        "5.3": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "unilateral_policy_change",
+      "sections_found": {
+        "2.2": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "delayed_incident_notice",
+      "sections_found": {
+        "7.3": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "ip_assignment_overreach",
+      "sections_found": {
+        "1.1": true,
+        "8.2": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "audit_rights_limited",
+      "sections_found": {
+        "11.2": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    },
+    {
+      "planted_risk_id": "law_and_data_scope_conflict",
+      "sections_found": {
+        "7.1": true,
+        "12.1": true,
+        "13.4": true
+      },
+      "all_sections_found": true,
+      "expected_quote_found_verbatim": true
+    }
+  ],
   "risk_recall": {
-    "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "risk_recall"
+    "value": 0.75,
+    "matched": 6,
+    "total": 8,
+    "status": "completed"
   },
   "section_match_recall": {
-    "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "section_match_recall"
+    "value": 1.0,
+    "matched": 8,
+    "total": 8,
+    "status": "completed"
   },
   "cross_clause_recall": {
-    "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "cross_clause_recall"
+    "value": 0.6,
+    "matched": 3,
+    "total": 5,
+    "status": "completed"
   },
   "quote_grounding_rate": {
-    "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "quote_grounding_rate"
+    "value": 1.0,
+    "grounded": 50,
+    "total": 50,
+    "status": "completed"
   },
   "distinct_authority_precision": {
-    "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "distinct_authority_precision"
+    "value": 1.0,
+    "distinct_authorities_found_in_bank": 5,
+    "distinct_authorities_cited": 5,
+    "counting_rule": "Unique cited authority IDs across all memo claims; numerator counts IDs present in the returned authority bank, denominator counts all distinct IDs cited.",
+    "status": "completed"
   },
   "claim_verification_rate": {
+    "value": 0.16666666666666666,
+    "verified": 1,
+    "total": 6,
+    "status": "completed"
+  },
+  "required_statute_text": {
+    "CAL BUS. & PROF. CODE § 16600": "loaded",
+    "CAL CIV. CODE § 1798.100": "loaded",
+    "EU REGULATION 2016/679 Article 33": "loaded"
+  },
+  "set_statute_text_script_exists": true,
+  "cal_bpc_16600_support_check": {
     "value": null,
-    "status": "not run: hard 8-minute timeout during setup/preflight (no stage event recorded)",
-    "metric": "claim_verification_rate"
+    "status": "not run: evaluator does not isolate per-statute support-check outcomes",
+    "metric": "independent support check against loaded statute text"
+  },
+  "cal_civ_1798_100_support_check": {
+    "value": null,
+    "status": "not run: evaluator does not isolate per-statute support-check outcomes",
+    "metric": "independent support check against loaded statute text"
+  },
+  "gdpr_article_33_support_check": {
+    "value": null,
+    "status": "not run: evaluator does not isolate per-statute support-check outcomes",
+    "metric": "independent support check against loaded GDPR Article 33 text"
   },
   "fabrication_test": {
-    "status": "not run: hard timeout",
-    "result_status": "not run"
-  }
+    "status": "passed",
+    "result_status": "rejected"
+  },
+  "per_claim_support_checks": [
+    {
+      "claim_id": "R1",
+      "claim": "The Supplier's unilateral right to modify security controls via portal posting may be inconsistent with the requirement for businesses to provide clear and conspicuous information regarding data collection and usage at the point of collection.",
+      "status": "unverified",
+      "authority_ids": [
+        "A1"
+      ],
+      "support_quotes": [],
+      "reason": "No independently grounded supporting passage was returned.",
+      "authority_text_loaded_count": 1,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": true,
+      "support_checker_called": true,
+      "support_checker_skip_reason": null,
+      "checker_responses": [
+        {
+          "claim": "The Supplier's unilateral right to modify security controls via portal posting may be inconsistent with the requirement for businesses to provide clear and conspicuous information regarding data collection and usage at the point of collection.",
+          "authority_title": "California Civil Code § 1798.100 (CCPA)",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "cited_authorities": [
+        {
+          "claim_id": "R1",
+          "authority_id": "A1",
+          "authority": "CAL CIV. CODE § 1798.100",
+          "normalized_key": "CAL CIV. CODE § 1798.100",
+          "resolver_found_entry": true,
+          "title": "California Civil Code § 1798.100 (CCPA)",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "unverified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "No independently grounded supporting passage was returned."
+        }
+      ]
+    },
+    {
+      "claim_id": "R-C31-01",
+      "claim": "The broad usage of aggregated data for product development may require that the processor provides sufficient guarantees to ensure the protection of data subject rights.",
+      "status": "verified",
+      "authority_ids": [
+        "A2",
+        "A6",
+        "A5"
+      ],
+      "support_quotes": [
+        "Where processing is to be carried out on behalf of a controller, the controller shall use only processors providing sufficient guarantees to implement appropriate technical and organisational measures in such a manner that processing will meet the requirements of this Regulation and ensure the protection of the rights of the data subject."
+      ],
+      "reason": null,
+      "authority_text_loaded_count": 3,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": true,
+      "support_checker_called": true,
+      "support_checker_skip_reason": null,
+      "checker_responses": [
+        {
+          "claim": "The broad usage of aggregated data for product development may require that the processor provides sufficient guarantees to ensure the protection of data subject rights.",
+          "authority_title": "Regulation (EU) 2016/679, Article 28",
+          "label": "supports",
+          "support_quote": "Where processing is to be carried out on behalf of a controller, the controller shall use only processors providing sufficient guarantees to implement appropriate technical and organisational measures in such a manner that processing will meet the requirements of this Regulation and ensure the protection of the rights of the data subject.",
+          "quote_verbatim": true,
+          "model": "gemini-3.1-flash-lite"
+        },
+        {
+          "claim": "The broad usage of aggregated data for product development may require that the processor provides sufficient guarantees to ensure the protection of data subject rights.",
+          "authority_title": "Regulation (EU) 2016/679, Article 46",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        },
+        {
+          "claim": "The broad usage of aggregated data for product development may require that the processor provides sufficient guarantees to ensure the protection of data subject rights.",
+          "authority_title": "Regulation (EU) 2016/679, Article 45",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "cited_authorities": [
+        {
+          "claim_id": "R-C31-01",
+          "authority_id": "A2",
+          "authority": "EU REGULATION 2016/679 ART. 28",
+          "normalized_key": "EU REGULATION 2016/679 ART. 28",
+          "resolver_found_entry": true,
+          "title": "Regulation (EU) 2016/679, Article 28",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "verified",
+          "support_quote": null,
+          "support_quote_verbatim": true,
+          "checker_label": "supports",
+          "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+        },
+        {
+          "claim_id": "R-C31-01",
+          "authority_id": "A6",
+          "authority": "EU REGULATION 2016/679 ART. 46",
+          "normalized_key": "EU REGULATION 2016/679 ART. 46",
+          "resolver_found_entry": true,
+          "title": "Regulation (EU) 2016/679, Article 46",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "verified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+        },
+        {
+          "claim_id": "R-C31-01",
+          "authority_id": "A5",
+          "authority": "EU REGULATION 2016/679 ART. 45",
+          "normalized_key": "EU REGULATION 2016/679 ART. 45",
+          "resolver_found_entry": true,
+          "title": "Regulation (EU) 2016/679, Article 45",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "verified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+        }
+      ]
+    },
+    {
+      "claim_id": "R-C37-01",
+      "claim": "The thirty-day notification window for security incidents may hinder the controller's ability to document breaches and enable supervisory authorities to verify compliance.",
+      "status": "unverified",
+      "authority_ids": [
+        "A3"
+      ],
+      "support_quotes": [],
+      "reason": "No independently grounded supporting passage was returned.",
+      "authority_text_loaded_count": 1,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": true,
+      "support_checker_called": true,
+      "support_checker_skip_reason": null,
+      "checker_responses": [
+        {
+          "claim": "The thirty-day notification window for security incidents may hinder the controller's ability to document breaches and enable supervisory authorities to verify compliance.",
+          "authority_title": "GDPR Article 33",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "cited_authorities": [
+        {
+          "claim_id": "R-C37-01",
+          "authority_id": "A3",
+          "authority": "EU REGULATION 2016/679 ART. 33",
+          "normalized_key": "EU REGULATION 2016/679 ART. 33",
+          "resolver_found_entry": true,
+          "title": "GDPR Article 33",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "unverified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "No independently grounded supporting passage was returned."
+        }
+      ]
+    },
+    {
+      "claim_id": "R-C41-01",
+      "claim": "The assignment of intellectual property rights in configurations and materials may impact the controller's ability to ensure that processors provide sufficient guarantees for data protection.",
+      "status": "unverified",
+      "authority_ids": [
+        "A2"
+      ],
+      "support_quotes": [],
+      "reason": "No independently grounded supporting passage was returned.",
+      "authority_text_loaded_count": 1,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": true,
+      "support_checker_called": true,
+      "support_checker_skip_reason": null,
+      "checker_responses": [
+        {
+          "claim": "The assignment of intellectual property rights in configurations and materials may impact the controller's ability to ensure that processors provide sufficient guarantees for data protection.",
+          "authority_title": "Regulation (EU) 2016/679, Article 28",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "cited_authorities": [
+        {
+          "claim_id": "R-C41-01",
+          "authority_id": "A2",
+          "authority": "EU REGULATION 2016/679 ART. 28",
+          "normalized_key": "EU REGULATION 2016/679 ART. 28",
+          "resolver_found_entry": true,
+          "title": "Regulation (EU) 2016/679, Article 28",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "unverified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "No independently grounded supporting passage was returned."
+        }
+      ]
+    },
+    {
+      "claim_id": "R-C69-01",
+      "claim": "The independent determination of applicable laws by each party may conflict with the requirement that controllers use processors providing sufficient guarantees to meet regulatory requirements.",
+      "status": "unverified",
+      "authority_ids": [
+        "A2"
+      ],
+      "support_quotes": [],
+      "reason": "No independently grounded supporting passage was returned.",
+      "authority_text_loaded_count": 1,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": true,
+      "support_checker_called": true,
+      "support_checker_skip_reason": null,
+      "checker_responses": [
+        {
+          "claim": "The independent determination of applicable laws by each party may conflict with the requirement that controllers use processors providing sufficient guarantees to meet regulatory requirements.",
+          "authority_title": "Regulation (EU) 2016/679, Article 28",
+          "label": "not_supported",
+          "support_quote": null,
+          "quote_verbatim": false,
+          "model": "gemini-3.1-flash-lite"
+        }
+      ],
+      "cited_authorities": [
+        {
+          "claim_id": "R-C69-01",
+          "authority_id": "A2",
+          "authority": "EU REGULATION 2016/679 ART. 28",
+          "normalized_key": "EU REGULATION 2016/679 ART. 28",
+          "resolver_found_entry": true,
+          "title": "Regulation (EU) 2016/679, Article 28",
+          "source_status": "resolved",
+          "authority_text_loaded": true,
+          "support_checker_called": true,
+          "status": "unverified",
+          "support_quote": null,
+          "support_quote_verbatim": false,
+          "checker_label": "not_supported",
+          "reason": "No independently grounded supporting passage was returned."
+        }
+      ]
+    },
+    {
+      "claim_id": "R-C12-01",
+      "claim": "The ability to commence work on change requests via email without a budget cap creates financial risk.",
+      "status": "unverified",
+      "authority_ids": [],
+      "support_quotes": [],
+      "reason": "Source not loaded: No loaded authority with source text is available to support this claim.",
+      "authority_text_loaded_count": 0,
+      "authority_text_unavailable_count": 0,
+      "support_checker_call_possible": false,
+      "support_checker_called": false,
+      "support_checker_skip_reason": "No cited authority text was available; verifier skipped the checker.",
+      "checker_responses": [],
+      "cited_authorities": []
+    }
+  ],
+  "per_statute_support_checks": [
+    {
+      "claim_id": "R1",
+      "authority_id": "A1",
+      "authority": "CAL CIV. CODE § 1798.100",
+      "normalized_key": "CAL CIV. CODE § 1798.100",
+      "resolver_found_entry": true,
+      "title": "California Civil Code § 1798.100 (CCPA)",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "unverified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "No independently grounded supporting passage was returned."
+    },
+    {
+      "claim_id": "R-C31-01",
+      "authority_id": "A2",
+      "authority": "EU REGULATION 2016/679 ART. 28",
+      "normalized_key": "EU REGULATION 2016/679 ART. 28",
+      "resolver_found_entry": true,
+      "title": "Regulation (EU) 2016/679, Article 28",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "verified",
+      "support_quote": null,
+      "support_quote_verbatim": true,
+      "checker_label": "supports",
+      "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+    },
+    {
+      "claim_id": "R-C31-01",
+      "authority_id": "A6",
+      "authority": "EU REGULATION 2016/679 ART. 46",
+      "normalized_key": "EU REGULATION 2016/679 ART. 46",
+      "resolver_found_entry": true,
+      "title": "Regulation (EU) 2016/679, Article 46",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "verified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+    },
+    {
+      "claim_id": "R-C31-01",
+      "authority_id": "A5",
+      "authority": "EU REGULATION 2016/679 ART. 45",
+      "normalized_key": "EU REGULATION 2016/679 ART. 45",
+      "resolver_found_entry": true,
+      "title": "Regulation (EU) 2016/679, Article 45",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "verified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "Verifier result is claim-level; it does not map a support quote to one authority among multiple IDs."
+    },
+    {
+      "claim_id": "R-C37-01",
+      "authority_id": "A3",
+      "authority": "EU REGULATION 2016/679 ART. 33",
+      "normalized_key": "EU REGULATION 2016/679 ART. 33",
+      "resolver_found_entry": true,
+      "title": "GDPR Article 33",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "unverified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "No independently grounded supporting passage was returned."
+    },
+    {
+      "claim_id": "R-C41-01",
+      "authority_id": "A2",
+      "authority": "EU REGULATION 2016/679 ART. 28",
+      "normalized_key": "EU REGULATION 2016/679 ART. 28",
+      "resolver_found_entry": true,
+      "title": "Regulation (EU) 2016/679, Article 28",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "unverified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "No independently grounded supporting passage was returned."
+    },
+    {
+      "claim_id": "R-C69-01",
+      "authority_id": "A2",
+      "authority": "EU REGULATION 2016/679 ART. 28",
+      "normalized_key": "EU REGULATION 2016/679 ART. 28",
+      "resolver_found_entry": true,
+      "title": "Regulation (EU) 2016/679, Article 28",
+      "source_status": "resolved",
+      "authority_text_loaded": true,
+      "support_checker_called": true,
+      "status": "unverified",
+      "support_quote": null,
+      "support_quote_verbatim": false,
+      "checker_label": "not_supported",
+      "reason": "No independently grounded supporting passage was returned."
+    }
+  ],
+  "known_support_probes": [],
+  "per_planted_risk": [
+    {
+      "planted_risk_id": "unlimited_indemnity_bypass",
+      "title": "Indemnity carve-out defeats the liability cap",
+      "expected_sections": [
+        "9.3",
+        "9.4"
+      ],
+      "expected_quote_anchor": "either party's indemnification obligations",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": false,
+      "section_matched": true,
+      "cross_clause_expected": true,
+      "cross_clause_matched": false,
+      "closest_reported_risk": {
+        "risk_id": "R-C47-01",
+        "title": "Exclusion of Data Loss from Liability Cap",
+        "reported_sections": [
+          "9.3"
+        ],
+        "overlapping_sections": [
+          "9.3"
+        ],
+        "quote_anchor_overlap": false,
+        "reported_quote_spans": [
+          "Neither party will be liable for indirect, incidental, special, punitive, or consequential damages or for lost profits, revenues, goodwill, or data."
+        ],
+        "cross_clause_ids": [
+          "C47"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "broad_customer_data_definition",
+      "title": "Customer Data definition silently broadens processing scope",
+      "expected_sections": [
+        "1.1",
+        "7.1"
+      ],
+      "expected_quote_anchor": "any information derived, inferred, or generated",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": false,
+      "section_matched": true,
+      "cross_clause_expected": true,
+      "cross_clause_matched": false,
+      "closest_reported_risk": {
+        "risk_id": "R-002-C31-C35",
+        "title": "Ambiguity in Data Usage Rights for Product Development",
+        "reported_sections": [
+          "6.2",
+          "7.1"
+        ],
+        "overlapping_sections": [
+          "7.1"
+        ],
+        "quote_anchor_overlap": false,
+        "reported_quote_spans": [
+          "Supplier may use aggregated service statistics and generalized learnings for product development, benchmarking, and marketing, provided the information does not identify Customer by name.",
+          "Supplier may also use Customer Data to develop, test, and improve its products if the data is aggregated or de-identified."
+        ],
+        "cross_clause_ids": [
+          "C31",
+          "C35"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "renewal_and_termination_asymmetry",
+      "title": "Renewal window combines with asymmetric termination rights",
+      "expected_sections": [
+        "5.2",
+        "5.3"
+      ],
+      "expected_quote_anchor": "at least ninety days before the end",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": true,
+      "cross_clause_matched": true,
+      "closest_reported_risk": {
+        "risk_id": "R-001",
+        "title": "Asymmetric Renewal and Termination Notice Periods",
+        "reported_sections": [
+          "4.3",
+          "5.2"
+        ],
+        "overlapping_sections": [
+          "5.2"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "Supplier may increase recurring fees at renewal by up to eight percent on thirty days' notice. If Customer objects, Customer may terminate only the affected SOW by giving written notice within ten days after receiving the increase notice",
+          "This Agreement renews automatically for successive one-year terms unless Customer gives written non-renewal notice at least ninety days before the end of the then-current term."
+        ],
+        "cross_clause_ids": [
+          "C22",
+          "C26"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "unilateral_policy_change",
+      "title": "Supplier can amend policies by posting them",
+      "expected_sections": [
+        "2.2"
+      ],
+      "expected_quote_anchor": "Continued use after the posting date constitutes acceptance",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": false,
+      "cross_clause_matched": false,
+      "closest_reported_risk": {
+        "risk_id": "R1",
+        "title": "Unilateral Modification of Security Controls and Service Policies",
+        "reported_sections": [
+          "2.2"
+        ],
+        "overlapping_sections": [
+          "2.2"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "Supplier may revise the Services, documentation, security controls, or service policies at any time by posting an updated version to its customer portal. Continued use after the posting date constitutes acceptance of the update."
+        ],
+        "cross_clause_ids": [
+          "C11"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "delayed_incident_notice",
+      "title": "Incident notice may arrive thirty days after confirmation",
+      "expected_sections": [
+        "7.3"
+      ],
+      "expected_quote_anchor": "within thirty days after confirming the incident",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": false,
+      "cross_clause_matched": false,
+      "closest_reported_risk": {
+        "risk_id": "R-001-C17-C37",
+        "title": "Potential misalignment between security incident notification timelines and suspension rights",
+        "reported_sections": [
+          "3.3",
+          "7.3"
+        ],
+        "overlapping_sections": [
+          "7.3"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "Supplier may suspend access immediately if it reasonably believes that continued access creates a security threat",
+          "Supplier will notify Customer of a Security Incident without undue delay and in any event within thirty days after confirming the incident."
+        ],
+        "cross_clause_ids": [
+          "C17",
+          "C37"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "ip_assignment_overreach",
+      "title": "Assignment language sweeps in feedback and deliverables",
+      "expected_sections": [
+        "1.1",
+        "8.2"
+      ],
+      "expected_quote_anchor": "all rights in feedback, suggestions, configurations, and materials",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": true,
+      "cross_clause_matched": true,
+      "closest_reported_risk": {
+        "risk_id": "R-003",
+        "title": "Ownership of Deliverables and Feedback Assignment",
+        "reported_sections": [
+          "8.1",
+          "8.2"
+        ],
+        "overlapping_sections": [
+          "8.2"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "Supplier grants Customer a non-exclusive, non-transferable license to use the Services and Deliverables for Customer's internal business purposes during the applicable SOW term.",
+          "Customer hereby assigns to Supplier all rights in feedback, suggestions, configurations, and materials created in connection with the Services, including any Deliverables identified in a SOW."
+        ],
+        "cross_clause_ids": [
+          "C40",
+          "C41"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "audit_rights_limited",
+      "title": "Audit right excludes key security evidence",
+      "expected_sections": [
+        "11.2"
+      ],
+      "expected_quote_anchor": "may not access information about other customers, source code, or Supplier's internal security controls",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": false,
+      "cross_clause_matched": false,
+      "closest_reported_risk": {
+        "risk_id": "R-002-C36-C57",
+        "title": "Conflict Between Audit Rights and Security Control Transparency",
+        "reported_sections": [
+          "11.2",
+          "7.2"
+        ],
+        "overlapping_sections": [
+          "11.2"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "An audit may not access information about other customers, source code, or Supplier's internal security controls.",
+          "Supplier may change its controls from time to time if it determines that the change does not materially reduce its overall security posture."
+        ],
+        "cross_clause_ids": [
+          "C36",
+          "C57"
+        ]
+      }
+    },
+    {
+      "planted_risk_id": "law_and_data_scope_conflict",
+      "title": "Choice of law does not resolve mandatory data-law obligations",
+      "expected_sections": [
+        "12.1",
+        "13.4",
+        "7.1"
+      ],
+      "expected_quote_anchor": "each party is responsible for determining which laws apply",
+      "expected_quote_found_verbatim_in_document": true,
+      "matched": true,
+      "section_matched": true,
+      "cross_clause_expected": true,
+      "cross_clause_matched": true,
+      "closest_reported_risk": {
+        "risk_id": "R-002-C15-C69",
+        "title": "Ambiguity in Regulatory Compliance Responsibility for Data",
+        "reported_sections": [
+          "13.4",
+          "3.1"
+        ],
+        "overlapping_sections": [
+          "13.4"
+        ],
+        "quote_anchor_overlap": true,
+        "reported_quote_spans": [
+          "Customer is responsible for the accuracy, quality, and legality of Customer Data and for obtaining any notices, permissions, and consents required for Supplier's use of Customer Data to provide the Services.",
+          "The parties will comply with applicable laws in performing their obligations, but each party is responsible for determining which laws apply to its own activities and data."
+        ],
+        "cross_clause_ids": [
+          "C15",
+          "C69"
+        ]
+      }
+    }
+  ],
+  "known_support_probes_status": "not run: optional source-identity smoke probes disabled"
 }

@@ -2,6 +2,8 @@
 
 Privacy-first legal document analysis starter built with FastAPI, LangGraph, Gemini, ephemeral Qdrant, and Next.js.
 
+For the six judging criteria, a truthful three-minute pitch, proposed pilot metrics, and deployment boundaries, see [the submission brief](docs/SUBMISSION_BRIEF.md). The current code has not had a live evaluation after the latest memo-generation change.
+
 ## Run locally
 
 1. Copy `backend/.env.example` to `backend/.env` and set provider keys as needed.
@@ -63,7 +65,7 @@ flowchart TD
 The table below is copied from the evaluator's actual live run. It reports only checks that ran; unavailable metrics have no numeric value.
 
 <!-- EVAL_TABLE_START -->
-Evaluation results are recorded in [backend/eval_results.json](backend/eval_results.json). Numeric results are omitted here pending review and approval.
+Numeric evaluation results are intentionally omitted here pending approval. The recorded live baseline predates the current source-grounded memo-generation change, so it must not be presented as a benchmark of the current code. The full prior run output, including its model metadata and per-claim outcomes, is in [backend/eval_results.json](backend/eval_results.json); rerun the live evaluator on the current code before presenting performance as current. Bank membership measures source resolution only, not legal relevance or support. Known-source probes are source-identity smoke tests, not substantive legal opinions.
 <!-- EVAL_TABLE_END -->
 
 Model names and per-claim/per-authority support-check outcomes are recorded in the evaluation JSON; temperature 0 was requested for analytical and support-check calls.

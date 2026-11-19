@@ -8,17 +8,29 @@ _DEFINITION = re.compile(r"(?m)^\s*(?:(?:\d+(?:\.\d+)*\.?|\([A-Za-z0-9]+\))\s+)?
 
 def _is_heading(line: str) -> bool:
     candidate = line.strip()
-    if not candidate or len(candidate) > 140:
+    if not candidate:
         return False
     if _NUMBERED.match(candidate):
         return True
+    if len(candidate) > 140:
+        return False
     letters = [char for char in candidate if char.isalpha()]
     return len(letters) >= 3 and candidate == candidate.upper() and len(candidate.split()) <= 16
 
 
 def _heading_for(block: str) -> str | None:
     first = block.splitlines()[0].strip() if block.splitlines() else ""
-    return first if _is_heading(first) else None
+    if not _is_heading(first):
+        return None
+    numbered = _NUMBERED.match(first)
+    if not numbered:
+        return first
+    marker = first[:numbered.end()].strip()
+    remainder = first[numbered.end():].strip()
+    label = re.split(r"(?<=[.:;])\s+", remainder, maxsplit=1)[0].strip()
+    if len(label) > 80:
+        label = label[:77].rstrip() + "..."
+    return f"{marker} {label}".strip()
 
 
 def segment_document(text: str, page_texts: list[str] | None = None) -> tuple[list[Clause], dict[str, str]]:

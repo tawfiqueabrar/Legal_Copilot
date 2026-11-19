@@ -23,3 +23,17 @@ def test_parsed_document_schema_is_structured():
     parsed = ParsedDocument(filename="msa.txt", content_type="text/plain", text="Terms")
     assert parsed.clauses == []
     assert parsed.definitions == {}
+
+
+def test_long_single_line_numbered_sections_get_short_headings_and_exact_offsets():
+    first = "7.1 Data terms. " + ("A processor may handle information under the agreement. " * 5)
+    second = "7.2 Security terms. " + ("A party shall protect information using safeguards. " * 5)
+    text = first + "\n\n" + second
+
+    clauses, _ = segment_document(text)
+
+    assert len(clauses) == 2
+    assert clauses[0].heading.startswith("7.1")
+    assert clauses[1].heading.startswith("7.2")
+    assert len(clauses[0].heading) < 100
+    assert all(text[clause.start:clause.end] == clause.text for clause in clauses)

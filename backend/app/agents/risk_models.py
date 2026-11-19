@@ -119,6 +119,7 @@ class FinalMemo(BaseModel):
     methodology: str = "Authorities are resolved against source records; each claim is independently checked against quoted source text."
     notice: str = "Not legal advice. Consult qualified counsel."
     footer: str = "This report does not establish an actual violation or provide a final legal opinion."
+    document_facts: dict = Field(default_factory=dict)
     analysis_metadata: dict = Field(default_factory=dict)
 
 

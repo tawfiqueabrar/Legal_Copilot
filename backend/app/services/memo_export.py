@@ -63,6 +63,16 @@ def _pdf_risk(story: list, styles, index: int, risk) -> None:
     story.append(Spacer(1, 8))
 
 
+def _document_facts_lines(memo: FinalMemo) -> list[str]:
+    facts = memo.document_facts or {}
+    rows = []
+    if facts.get("document_kind"):
+        rows.append(f"Document type: {facts['document_kind']}")
+    rows.extend(f"Party extracted from image: {party}" for party in facts.get("parties", []))
+    rows.extend(f"Potential deadline to confirm: {deadline}" for deadline in facts.get("deadlines", []))
+    return rows
+
+
 def memo_to_docx(value: dict | FinalMemo) -> bytes:
     memo = _memo(value)
     doc = Document()
@@ -70,6 +80,12 @@ def memo_to_docx(value: dict | FinalMemo) -> bytes:
     doc.add_paragraph(f"Document name: {memo.document_name or 'Unavailable'}")
     doc.add_paragraph(memo.assessment_line)
     doc.add_paragraph(memo.notice)
+    fact_lines = _document_facts_lines(memo)
+    if fact_lines:
+        doc.add_heading("Vision-extracted document details", level=1)
+        doc.add_paragraph("Confirm extracted names and dates against the original document.")
+        for line in fact_lines:
+            doc.add_paragraph(line, style="List Bullet")
 
     doc.add_heading("Legal sources in scope", level=1)
     if memo.legal_sources_in_scope:
@@ -145,6 +161,10 @@ def memo_to_pdf(value: dict | FinalMemo) -> bytes:
         Spacer(1, 10),
         Paragraph("Legal sources in scope", styles["Heading1"]),
     ]
+    fact_lines = _document_facts_lines(memo)
+    if fact_lines:
+        story.extend([Paragraph("Vision-extracted document details", styles["Heading1"]), Paragraph("Confirm extracted names and dates against the original document.", styles["BodyText"])])
+        story.extend(Paragraph(escape(line), styles["BodyText"]) for line in fact_lines)
     if memo.legal_sources_in_scope:
         for source in memo.legal_sources_in_scope:
             retrieved = f" Retrieved: {source.retrieved_at}" if source.retrieved_at else ""
