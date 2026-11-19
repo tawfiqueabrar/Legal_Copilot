@@ -6,11 +6,31 @@ For the six judging criteria, a truthful three-minute pitch, proposed pilot metr
 
 ## Run locally
 
-1. Copy `backend/.env.example` to `backend/.env` and set provider keys as needed.
+1. Create `backend/.env` and set the provider configuration described below.
 2. Start the API from `backend`: `python -m venv .venv`, activate it, `pip install -e .`, then `uvicorn app.main:app --reload`.
 3. Start the UI from `frontend`: `npm install`, `npm run dev`.
 
 The API defaults to ephemeral in-memory session/document state and Qdrant `:memory:`. No user document is written to disk. The frontend keeps the selected file in browser memory and uploads only for the active analysis session. Use HTTPS and redact session IDs from reverse-proxy access logs before exposing this service. Gemini 2.5 can apply implicit context caching to repeated large prefixes; cache hits and savings depend on provider behavior and are not guaranteed. Explicit remote cache objects are not created because they would complicate purge guarantees.
+
+### Use a local LM Studio model
+
+Gemini remains the default provider. To use a model served by LM Studio, load the model in LM Studio, start its local server in the Developer tab, then set these values in `backend/.env`:
+
+```env
+LLM_PROVIDER=lmstudio
+LM_STUDIO_BASE_URL=http://localhost:1234/v1
+LM_STUDIO_MODEL=
+LM_STUDIO_TIMEOUT_SECONDS=600
+LM_STUDIO_MAX_TOKENS=8192
+```
+
+When `LM_STUDIO_MODEL` is blank, the backend selects the first model returned by LM Studio; set it to a model ID from `http://localhost:1234/v1/models` if you have multiple models loaded. Restart the backend after changing the provider. No Gemini API key is needed in LM Studio mode.
+
+### Live pitch and technical docs
+
+The frontend serves the scheduled showcase at `http://localhost:3000/docs`. The admin panel is at `/docs?admin=1`. Set a strong `DOCS_ADMIN_TOKEN` in `backend/.env` before using admin editing; without it, admin access is disabled. Admin login uses an HTTP-only, SameSite=Strict cookie. The default public window is June 10 00:00 through June 14 23:59 Asia/Dhaka, recurring yearly; an administrator can change the schedule or switch visibility off. Content drafts, published copies, and version records are stored in `backend/data/docs.sqlite3` (override with `DOCS_DB_PATH`). Keep this SQLite file on persistent storage in deployments; ephemeral filesystems lose edits on restart. The app remains single-worker while its analysis sessions are process-local.
+
+The public page supports Markdown download and browser print-to-PDF. Live fields come from backend configuration and feature flags; user/event analytics are not collected. Use the admin team editor only for contributor details approved for public display.
 
 ## Boundaries
 
