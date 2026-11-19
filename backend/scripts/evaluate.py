@@ -86,7 +86,7 @@ async def _preflight() -> dict[str, Any]:
     """Bound config, local input, ingestion, offline verification, Gemini, and CourtListener checks."""
     results: list[dict[str, Any]] = []
     print("[preflight] config loaded; key configured=" + str(bool(settings.gemini_api_key)) + "; primary=" + settings.gemini_model, flush=True)
-    results.append({"name": "config", "status": "available", "details": {"gemini_key_configured": bool(settings.gemini_api_key), "primary_model": settings.gemini_model, "support_model": settings.support_check_model, "fallback_model": settings.gemini_fallback_model or None}})
+    results.append({"name": "config", "status": "available", "details": {"gemini_key_configured": bool(settings.gemini_api_key), "primary_model": settings.gemini_model, "support_model": settings.support_check_model, "fallback_models": settings.gemini_fallback_models}})
 
     input_data: dict[str, bytes] = {}
 
@@ -121,7 +121,7 @@ async def _preflight() -> dict[str, Any]:
             raise RuntimeError("GEMINI_API_KEY is not configured")
         client = build_gemini_client(settings.gemini_api_key)
         try:
-            wrapper = GeminiCallWrapper(client, fallback_model=settings.gemini_fallback_model)
+            wrapper = GeminiCallWrapper(client, fallback_models=settings.gemini_fallback_models)
             response, actual_model = await wrapper.generate(
                 'Return a JSON object with status set to "ok".', _PreflightReply, settings.gemini_model
             )
@@ -337,7 +337,7 @@ def _status_from_memo(memo: dict, expected: dict, source: str) -> dict[str, Any]
 async def _known_support_probes(source: str, progress_callback=None) -> list[dict[str, Any]]:
     wrapper = GeminiCallWrapper(
         build_gemini_client(settings.gemini_api_key),
-        fallback_model=settings.gemini_fallback_model,
+        fallback_models=settings.gemini_fallback_models,
     )
     resolver = StaticCorpusResolver(CORPUS)
     probe_inputs = [
@@ -441,7 +441,7 @@ async def evaluate(output_path: Path = OUTPUT, progress_callback=None, *, source
         "model_metadata": {
             "configured_primary": settings.gemini_model,
             "configured_support_checker": settings.support_check_model,
-            "configured_fallback": settings.gemini_fallback_model or None,
+            "configured_fallbacks": settings.gemini_fallback_models,
             "temperature_requested": 0.0,
             "model_calls": [],
             "known_probe_model_calls": [],
@@ -642,7 +642,7 @@ def main() -> int:
                 "model_metadata": {
                     "configured_primary": settings.gemini_model,
                     "configured_support_checker": settings.support_check_model,
-                    "configured_fallback": settings.gemini_fallback_model or None,
+                    "configured_fallbacks": settings.gemini_fallback_models,
                     "temperature_requested": 0.0,
                     "model_calls": [],
                     "fallback_used": False,

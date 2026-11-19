@@ -261,7 +261,10 @@ def _merge_risk_findings(items: list[RiskFinding]) -> list[RiskFinding]:
 class LegalWorkflow:
     def __init__(self, *, model_call: ModelCall | None = None, resolver=None, support_checker=None, progress_callback=None):
         self.client = build_gemini_client(settings.gemini_api_key) if settings.gemini_api_key and model_call is None else None
-        self.gemini = GeminiCallWrapper(self.client, fallback_model=settings.gemini_fallback_model) if self.client else None
+        self.gemini = GeminiCallWrapper(
+            self.client,
+            fallback_models=settings.gemini_fallback_models,
+        ) if self.client else None
         self.model_call = model_call
         self._model_call_records: ContextVar[list[dict] | None] = ContextVar(f"legal_workflow_models_{id(self)}", default=None)
         self._support_check_records: ContextVar[list[dict] | None] = ContextVar(f"legal_workflow_support_checks_{id(self)}", default=None)
@@ -776,7 +779,7 @@ class LegalWorkflow:
                 "support_checks": list(self._support_check_records.get() or []),
                 "primary_model": settings.gemini_model,
                 "support_checker_model": settings.support_check_model,
-                "fallback_model": settings.gemini_fallback_model or None,
+                "fallback_models": settings.gemini_fallback_models,
                 "claim_repair_attempted": state.get("claim_repair_attempted", False),
                 "research_retrieval": state.get("research_diagnostics", []),
             },

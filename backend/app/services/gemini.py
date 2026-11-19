@@ -10,7 +10,7 @@ from google import genai
 from google.genai import types
 
 
-RETRY_DELAYS = (2.0, 5.0, 10.0)
+RETRY_DELAYS = (1.0,)
 RETRYABLE_STATUSES = {429, 503, 504}
 REQUEST_TIMEOUT_SECONDS = 60.0
 _SCHEMA_KEYS_UNSUPPORTED_BY_GEMINI = {"$defs", "definitions", "$ref", "additionalProperties", "default", "examples"}
@@ -93,29 +93,36 @@ def gemini_error_details(exc: BaseException, *, api_key: str = "") -> dict[str, 
         category = "key_invalid_or_access_denied"
     else:
         category = "provider_error"
-    return {
+    details = {
         "category": category,
         "exception_class": name,
         "http_status": status,
         "message": message,
     }
+    attempted_models = getattr(exc, "attempted_models", None)
+    if isinstance(attempted_models, list) and attempted_models:
+        details["attempted_models"] = [str(model) for model in attempted_models]
+    return details
 
 
 class GeminiCallWrapper:
-    """One structured Gemini call path with explicit retry and fallback behavior."""
+    """One structured Gemini call path with a short retry and bounded model failover."""
 
     def __init__(
         self,
         client: Any,
         *,
         fallback_model: str = "",
+        fallback_models: list[str] | None = None,
         sleep: Callable[[float], Awaitable[Any]] = asyncio.sleep,
-        request_timeout_seconds: float = REQUEST_TIMEOUT_SECONDS,
     ):
         self.client = client
-        self.fallback_model = fallback_model.strip()
+        candidates = fallback_models if fallback_models is not None else [fallback_model]
+        self.fallback_models = list(dict.fromkeys(
+            candidate.strip() for candidate in candidates
+            if candidate and candidate.strip()
+        ))
         self.sleep = sleep
-        self.request_timeout_seconds = request_timeout_seconds
 
     async def _attempts(
         self,
@@ -142,7 +149,9 @@ class GeminiCallWrapper:
                 return schema.model_validate_json(response.text or "{}")
             except Exception as exc:
                 status = http_status(exc)
-                if attempt >= len(delays) or status not in RETRYABLE_STATUSES:
+                # A 503 is an explicit overload signal. Repeating the same
+                # overloaded model adds latency, so move straight to failover.
+                if attempt >= len(delays) or status not in RETRYABLE_STATUSES or (status == 503 and self.fallback_models):
                     raise
                 await self.sleep(delays[attempt])
         raise RuntimeError("Gemini retry loop ended unexpectedly")
@@ -156,12 +165,38 @@ class GeminiCallWrapper:
         media: bytes | None = None,
         media_type: str | None = None,
     ) -> tuple[Any, str]:
+        attempted = [model]
         try:
             value = await self._attempts(model, prompt, schema, media=media, media_type=media_type, retry=True)
             return value, model
         except Exception as exc:
-            if http_status(exc) not in {503, 504} or not self.fallback_model or self.fallback_model == model:
+            primary_exception = exc
+            recoverable = http_status(exc) in {503, 504} or isinstance(
+                exc, (TimeoutError, asyncio.TimeoutError)
+            )
+            if not recoverable:
                 raise
-        # A fallback is deliberately a single request; no recursive fallback chain.
-        value = await self._attempts(self.fallback_model, prompt, schema, media=media, media_type=media_type, retry=False)
-        return value, self.fallback_model
+
+        last_error = primary_exception
+        for fallback in self.fallback_models:
+            if fallback == model:
+                continue
+            attempted.append(fallback)
+            try:
+                # Each backup is attempted once. Do not add another backoff wait
+                # after the primary has already exhausted its short retry.
+                value = await self._attempts(fallback, prompt, schema, media=media, media_type=media_type, retry=False)
+                return value, fallback
+            except Exception as fallback_error:
+                last_error = fallback_error
+                status = http_status(fallback_error)
+                if status in {401, 403}:
+                    break  # Credential/access failures affect every model.
+                if status in {429, 404, 503, 504} or isinstance(fallback_error, (TimeoutError, asyncio.TimeoutError)):
+                    continue
+                break
+        try:
+            last_error.attempted_models = attempted
+        except Exception:
+            pass
+        raise last_error

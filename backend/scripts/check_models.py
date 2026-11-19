@@ -19,12 +19,12 @@ async def main(requested_models: list[str] | None = None) -> int:
         return 1
 
     models = list(dict.fromkeys(requested_models or (
-        model for model in (settings.gemini_model, settings.support_check_model, settings.gemini_fallback_model)
+        model for model in (settings.gemini_model, settings.support_check_model, *settings.gemini_fallback_models)
         if model
     )))
     wrapper = GeminiCallWrapper(
         build_gemini_client(settings.gemini_api_key),
-        fallback_model=settings.gemini_fallback_model,
+        fallback_models=settings.gemini_fallback_models,
     )
     for requested in models:
         try:

@@ -113,7 +113,7 @@ function apiError(detail: unknown, fallback: string) {
     ? (detail as { detail?: unknown }).detail
     : detail;
   if (payload && typeof payload === "object") {
-    const error = payload as { category?: unknown; exception_class?: unknown; http_status?: unknown; message?: unknown };
+    const error = payload as { category?: unknown; exception_class?: unknown; http_status?: unknown; message?: unknown; attempted_models?: unknown };
     const labels: Record<string, string> = {
       key_invalid: "Gemini key invalid",
       key_invalid_or_access_denied: "Gemini key invalid or access denied",
@@ -128,7 +128,9 @@ function apiError(detail: unknown, fallback: string) {
       const exceptionClass = typeof error.exception_class === "string" ? error.exception_class : "UnknownException";
       const status = typeof error.http_status === "number" ? `HTTP ${error.http_status}` : "HTTP status unavailable";
       const message = typeof error.message === "string" && error.message.trim() ? error.message : "No provider message was supplied.";
-      return `${label} · ${exceptionClass} · ${status} · ${message}`;
+      const models = Array.isArray(error.attempted_models) && error.attempted_models.every((item) => typeof item === "string")
+        ? ` · models tried: ${(error.attempted_models as string[]).join(" → ")}` : "";
+      return `${label} · ${exceptionClass} · ${status}${models} · ${message}`;
     }
     if (typeof error.message === "string" && error.message.trim()) return error.message;
   }

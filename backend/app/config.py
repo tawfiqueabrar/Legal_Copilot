@@ -15,8 +15,9 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-flash"
     # Keep a tested lightweight backup available in hosted deployments even when
-    # GEMINI_FALLBACK_MODEL is omitted; the wrapper uses it only after primary 503/504.
+    # GEMINI_FALLBACK_MODEL is omitted; failover is only used for transient failures.
     gemini_fallback_model: str = "gemini-3.1-flash-lite"
+    gemini_secondary_fallback_model: str = "gemini-3.5-flash"
     support_check_model: str = ""
     gemini_cache_ttl_seconds: int = 3600
     courtlistener_token: str = ""
@@ -38,6 +39,13 @@ class Settings(BaseSettings):
     @property
     def origins(self) -> list[str]:
         return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
+
+    @property
+    def gemini_fallback_models(self) -> list[str]:
+        return list(dict.fromkeys(
+            value.strip() for value in (self.gemini_fallback_model, self.gemini_secondary_fallback_model)
+            if value and value.strip() and value.strip() != self.gemini_model.strip()
+        ))
 
 
 settings = Settings()

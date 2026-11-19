@@ -43,7 +43,7 @@ def payload(rationale="grounded"):
     return '{"label":"supports","authority_quote":"exact source span","rationale":"' + rationale + '"}'
 
 
-def test_503_then_success_retries_and_validates_structured_schema():
+def test_503_switches_to_fallback_immediately_and_validates_schema():
     sleeps = []
 
     async def sleep(delay):
@@ -53,12 +53,28 @@ def test_503_then_success_retries_and_validates_structured_schema():
     wrapper = GeminiCallWrapper(client, fallback_model="fallback", sleep=sleep)
     value, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
 
-    assert actual == "primary"
+    assert actual == "fallback"
     assert value == SupportVerdict(label="supports", authority_quote="exact source span", rationale="grounded")
-    assert sleeps == [RETRY_DELAYS[0]]
+    assert sleeps == []
     assert all(call["config"].temperature == 0.0 for call in client.aio.models.calls)
     assert all(call["config"].response_schema["properties"]["label"]["enum"] for call in client.aio.models.calls)
     assert all("additionalProperties" not in call["config"].response_schema for call in client.aio.models.calls)
+
+
+def test_504_gets_one_short_retry_before_fallback():
+    sleeps = []
+
+    async def sleep(delay):
+        sleeps.append(delay)
+
+    client = FakeClient([ApiFailure(504), payload()])
+    wrapper = GeminiCallWrapper(client, fallback_model="fallback", sleep=sleep)
+
+    _, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
+
+    assert actual == "primary"
+    assert len(client.aio.models.calls) == 2
+    assert sleeps == [RETRY_DELAYS[0]]
 
 
 def test_pydantic_nested_schema_is_inlined_and_gemini_unsupported_keywords_removed():
@@ -70,34 +86,50 @@ def test_pydantic_nested_schema_is_inlined_and_gemini_unsupported_keywords_remov
     assert "$ref" not in str(schema)
 
 
-def test_primary_503s_then_fallback_is_tried_once():
+def test_primary_503s_then_fallback_chain_is_tried_once_per_model():
     sleeps = []
 
     async def sleep(delay):
         sleeps.append(delay)
 
-    client = FakeClient([ApiFailure(503)] * 4 + [ApiFailure(503, "fallback overloaded")])
-    wrapper = GeminiCallWrapper(client, fallback_model="fallback", sleep=sleep)
+    client = FakeClient([ApiFailure(503)] * 3)
+    wrapper = GeminiCallWrapper(client, fallback_models=["fallback", "secondary"], sleep=sleep)
 
     with pytest.raises(ApiFailure) as error:
         run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
 
     assert error.value.code == 503
-    assert [call["model"] for call in client.aio.models.calls] == ["primary"] * 4 + ["fallback"]
-    assert sleeps == list(RETRY_DELAYS)
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "fallback", "secondary"]
+    assert sleeps == []
+    assert error.value.attempted_models == ["primary", "fallback", "secondary"]
+    assert gemini_error_details(error.value)["attempted_models"] == ["primary", "fallback", "secondary"]
 
 
 def test_successful_fallback_is_reported_as_the_model_used():
     async def sleep(_delay):
         return None
 
-    client = FakeClient([ApiFailure(503)] * 4 + [payload()])
+    client = FakeClient([ApiFailure(503), payload()])
     wrapper = GeminiCallWrapper(client, fallback_model="fallback", sleep=sleep)
 
     value, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
 
     assert isinstance(value, SupportVerdict)
     assert actual == "fallback"
+
+
+def test_second_fallback_recovers_after_first_backup_is_overloaded():
+    async def sleep(_delay):
+        return None
+
+    client = FakeClient([ApiFailure(503)] * 2 + [payload()])
+    wrapper = GeminiCallWrapper(client, fallback_models=["lite", "secondary"], sleep=sleep)
+
+    value, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
+
+    assert isinstance(value, SupportVerdict)
+    assert actual == "secondary"
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "lite", "secondary"]
 
 
 def test_404_is_not_retried_or_fallbacked():
