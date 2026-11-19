@@ -152,7 +152,7 @@ class GeminiCallWrapper:
                 # Quota and overload errors are unlikely to recover on an
                 # immediate repeat. If backups exist, preserve latency by
                 # trying them instead of spending time retrying this model.
-                if attempt >= len(delays) or status not in RETRYABLE_STATUSES or (status in {429, 503} and self.fallback_models):
+                if attempt >= len(delays) or status not in RETRYABLE_STATUSES or (status in {429, 503, 504} and self.fallback_models):
                     raise
                 await self.sleep(delays[attempt])
         raise RuntimeError("Gemini retry loop ended unexpectedly")
@@ -193,6 +193,11 @@ class GeminiCallWrapper:
                 status = http_status(fallback_error)
                 if status in {401, 403}:
                     break  # Credential/access failures affect every model.
+                if status == 504 or isinstance(fallback_error, (TimeoutError, asyncio.TimeoutError)):
+                    # A second model timing out is a strong signal that this
+                    # request cannot finish within the current deadline. Stop
+                    # here rather than spending another full timeout on a third model.
+                    break
                 if status in {429, 404, 503, 504} or isinstance(fallback_error, (TimeoutError, asyncio.TimeoutError)):
                     continue
                 break

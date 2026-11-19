@@ -89,7 +89,7 @@ def test_429_on_all_models_reports_attempted_models():
     assert error.value.attempted_models == ["primary", "fallback", "secondary"]
 
 
-def test_504_gets_one_short_retry_before_fallback():
+def test_504_switches_to_fallback_without_waiting_on_same_model():
     sleeps = []
 
     async def sleep(delay):
@@ -100,9 +100,21 @@ def test_504_gets_one_short_retry_before_fallback():
 
     _, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
 
-    assert actual == "primary"
+    assert actual == "fallback"
     assert len(client.aio.models.calls) == 2
-    assert sleeps == [RETRY_DELAYS[0]]
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "fallback"]
+    assert sleeps == []
+
+
+def test_timeout_on_fallback_stops_before_a_third_model():
+    client = FakeClient([ApiFailure(504), ApiFailure(504), payload()])
+    wrapper = GeminiCallWrapper(client, fallback_models=["fallback", "secondary"])
+
+    with pytest.raises(ApiFailure) as error:
+        run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
+
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "fallback"]
+    assert error.value.attempted_models == ["primary", "fallback"]
 
 
 def test_pydantic_nested_schema_is_inlined_and_gemini_unsupported_keywords_removed():

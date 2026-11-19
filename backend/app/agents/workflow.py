@@ -69,9 +69,9 @@ def _research_query_for_risk(risk: dict, jurisdiction: dict) -> str:
     ) if part).strip()
 
 
-_SCAN_BATCH_SIZE = 16
+_SCAN_BATCH_SIZE = 32
 _CROSS_PAIR_LIMIT = 36
-_CROSS_PAIR_BATCH_SIZE = 4
+_CROSS_PAIR_BATCH_SIZE = 8
 _CROSS_TOPIC_PATTERNS = {
     "exposure": re.compile(r"\b(?:liabilit\w*|indemnif\w*|cap|carve[- ]out|damages|losses)\b", re.I),
     "term_lifecycle": re.compile(r"\b(?:renew\w*|terminat\w*|expir\w*|notice period|successive term)\b", re.I),

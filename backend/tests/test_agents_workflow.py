@@ -246,10 +246,12 @@ def test_checklist_scan_batches_long_documents_and_keeps_grounded_results():
 
     result = run_inline(workflow.checklist_scan(state))
 
-    assert len(prompts) == 4
-    assert len(result["risks"]) == 4
-    assert len({risk["risk_id"] for risk in result["risks"]}) == 4
+    assert len(prompts) == 2
+    assert len(result["risks"]) == 2
+    assert len({risk["risk_id"] for risk in result["risks"]}) == 2
     assert all("Clause batch" in prompt for prompt in prompts)
+    all_prompt_text = "\n".join(prompts)
+    assert all(f'"id": "C{i}"' in all_prompt_text for i in range(1, 51))
 
 
 def test_research_deduplicates_search_queries_across_risks():
