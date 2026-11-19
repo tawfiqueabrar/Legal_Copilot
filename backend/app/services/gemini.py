@@ -149,9 +149,10 @@ class GeminiCallWrapper:
                 return schema.model_validate_json(response.text or "{}")
             except Exception as exc:
                 status = http_status(exc)
-                # A 503 is an explicit overload signal. Repeating the same
-                # overloaded model adds latency, so move straight to failover.
-                if attempt >= len(delays) or status not in RETRYABLE_STATUSES or (status == 503 and self.fallback_models):
+                # Quota and overload errors are unlikely to recover on an
+                # immediate repeat. If backups exist, preserve latency by
+                # trying them instead of spending time retrying this model.
+                if attempt >= len(delays) or status not in RETRYABLE_STATUSES or (status in {429, 503} and self.fallback_models):
                     raise
                 await self.sleep(delays[attempt])
         raise RuntimeError("Gemini retry loop ended unexpectedly")
@@ -171,7 +172,7 @@ class GeminiCallWrapper:
             return value, model
         except Exception as exc:
             primary_exception = exc
-            recoverable = http_status(exc) in {503, 504} or isinstance(
+            recoverable = http_status(exc) in {429, 503, 504} or isinstance(
                 exc, (TimeoutError, asyncio.TimeoutError)
             )
             if not recoverable:

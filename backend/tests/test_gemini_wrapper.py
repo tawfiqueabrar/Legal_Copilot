@@ -61,6 +61,34 @@ def test_503_switches_to_fallback_immediately_and_validates_schema():
     assert all("additionalProperties" not in call["config"].response_schema for call in client.aio.models.calls)
 
 
+def test_429_switches_to_fallback_immediately():
+    async def sleep(_delay):
+        pytest.fail("quota errors should fail over immediately when a backup exists")
+
+    client = FakeClient([ApiFailure(429, "daily quota exceeded"), payload()])
+    wrapper = GeminiCallWrapper(client, fallback_model="fallback", sleep=sleep)
+
+    value, actual = run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
+
+    assert isinstance(value, SupportVerdict)
+    assert actual == "fallback"
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "fallback"]
+
+
+def test_429_on_all_models_reports_attempted_models():
+    async def sleep(_delay):
+        pytest.fail("quota errors should fail over immediately when backups exist")
+
+    client = FakeClient([ApiFailure(429, "daily quota exceeded")] * 3)
+    wrapper = GeminiCallWrapper(client, fallback_models=["fallback", "secondary"], sleep=sleep)
+
+    with pytest.raises(ApiFailure) as error:
+        run_inline(wrapper.generate("prompt", SupportVerdict, "primary"))
+
+    assert [call["model"] for call in client.aio.models.calls] == ["primary", "fallback", "secondary"]
+    assert error.value.attempted_models == ["primary", "fallback", "secondary"]
+
+
 def test_504_gets_one_short_retry_before_fallback():
     sleeps = []
 

@@ -137,6 +137,24 @@ function apiError(detail: unknown, fallback: string) {
   return fallback;
 }
 
+function quotaRetryDelayMs(message: string): number | null {
+  const match = message.match(/retry\s+in\s+(?:(\d+)h)?(?:(\d+)m)?([\d.]+)s/i);
+  if (!match) return null;
+  const hours = Number(match[1] || 0);
+  const minutes = Number(match[2] || 0);
+  const seconds = Number(match[3] || 0);
+  const delay = ((hours * 60 + minutes) * 60 + seconds) * 1000;
+  return Number.isFinite(delay) && delay > 0 ? delay : null;
+}
+
+function formatWait(milliseconds: number) {
+  const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return [hours ? `${hours}h` : "", minutes ? `${minutes}m` : "", `${seconds}s`].filter(Boolean).join(" ");
+}
+
 function safeHttpsUrl(value: string) {
   try {
     const url = new URL(value);
@@ -192,6 +210,8 @@ export default function Home() {
   const [working, setWorking] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
+  const [quotaRetryAt, setQuotaRetryAt] = useState<number | null>(null);
+  const [quotaClock, setQuotaClock] = useState(Date.now());
   const [verifyInput, setVerifyInput] = useState("");
   const [probe, setProbe] = useState<CitationProbe | null>(null);
   const [verifyLoading, setVerifyLoading] = useState(false);
@@ -239,6 +259,12 @@ export default function Home() {
   useEffect(() => {
     void checkHealth();
   }, [checkHealth]);
+
+  useEffect(() => {
+    if (quotaRetryAt === null) return;
+    const timer = window.setInterval(() => setQuotaClock(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [quotaRetryAt]);
 
   useEffect(() => {
     if (!file) {
@@ -354,8 +380,10 @@ export default function Home() {
 
   const runAnalysis = async () => {
     if (!file || working) return;
+    if (quotaRetryAt !== null && Date.now() < quotaRetryAt) return;
     setWorking(true);
     setError("");
+    setQuotaRetryAt(null);
     setMemo(null);
     setProbe(null);
     setSteps(INITIAL_STEPS);
@@ -391,6 +419,8 @@ export default function Home() {
     } catch (reason) {
       const message = reason instanceof Error ? reason.message : "Analysis is unavailable.";
       setError(message);
+      const retryDelay = quotaRetryDelayMs(message);
+      setQuotaRetryAt(retryDelay === null ? null : Date.now() + retryDelay);
       setSteps((previous) => {
         const active = previous.findIndex((item) => item.status === "running");
         return previous.map((item, index) => index === active ? { ...item, status: "failed", summary: message } : index < active ? { ...item, status: "done" } : item);
@@ -498,7 +528,7 @@ export default function Home() {
         {health !== "checking" && <button className="button button-secondary" disabled={healthChecking} onClick={() => void checkHealth()} type="button">{healthChecking ? "Checking…" : "Retry connection"}</button>}
       </div>}
 
-      {error && <div role="alert" className="mx-4 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-950 sm:mx-6"><div className="min-w-0 flex-1"><p>{error}</p>{sessionId && file && !memo && <p className="mt-1 text-xs">No report was produced. Retry starts a fresh temporary session with the file still selected in this browser.</p>}</div>{sessionId && file && !memo && <button className="shrink-0 rounded-md border border-rose-400 bg-white px-3 py-2 text-xs font-bold hover:bg-rose-100 disabled:opacity-50" disabled={working} onClick={() => void runAnalysis()} type="button">{working ? "Retrying…" : "Retry analysis"}</button>}</div>}
+      {error && <div role="alert" className="mx-4 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-950 sm:mx-6"><div className="min-w-0 flex-1"><p>{error}</p>{sessionId && file && !memo && <p className="mt-1 text-xs">No report was produced. Retry starts a fresh temporary session with the file still selected in this browser.</p>}{quotaRetryAt !== null && quotaRetryAt > quotaClock && <p className="mt-1 font-semibold">Provider quota reset wait: {formatWait(quotaRetryAt - quotaClock)}. Retrying before then is disabled.</p>}</div>{sessionId && file && !memo && <button className="shrink-0 rounded-md border border-rose-400 bg-white px-3 py-2 text-xs font-bold hover:bg-rose-100 disabled:opacity-50" disabled={working || (quotaRetryAt !== null && quotaRetryAt > quotaClock)} onClick={() => void runAnalysis()} type="button">{working ? "Retrying…" : quotaRetryAt !== null && quotaRetryAt > quotaClock ? `Retry in ${formatWait(quotaRetryAt - quotaClock)}` : "Retry analysis"}</button>}</div>}
 
       {!sessionId ? (
         <section id="home" className="landing-grid mx-auto grid max-w-6xl items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:py-16">
