@@ -8,7 +8,7 @@ from typing import Any, Awaitable, Callable, TypedDict
 from langgraph.graph import END, StateGraph
 from app.config import MIN_SUPPORT_QUOTE_CHARS, settings
 from app.ingestion import ParsedDocument, ingest_document, segment_document
-from app.agents.risk_models import DraftMemo, FinalMemo, JurisdictionFinding, MemoRisk, RiskFinding, RiskScan, VisionExtraction
+from app.agents.risk_models import DraftMemo, FinalMemo, JurisdictionFinding, MemoRisk, RiskFinding, RiskScan, SimpleRiskScan, VisionExtraction
 from app.verification.bank import AuthorityBank
 from app.verification.extract import CitationCandidate, extract_citations, span_in_text
 from app.verification.models import Authority, Citation, Claim, ClaimResult, MemoClaim, SupportVerdict
@@ -482,6 +482,58 @@ class LegalWorkflow:
         state["risks"] = [risk.model_dump() for risk in _merge_risk_findings(collected)]
         return state
 
+    async def simple_risk_scan(self, state: GraphState) -> GraphState:
+        """One compact model call for the user's upload -> three risks flow."""
+        await self._event(state, "risk_scan", "Checking the document for up to three quote-grounded risks")
+        clauses = state.get("clauses", [])
+        if not clauses:
+            state["risks"] = []
+            state.setdefault("warnings", []).append("No readable clauses were extracted, so risks could not be assessed.")
+            return state
+
+        clause_rows = [
+            {
+                "id": clause.get("id"),
+                "section": clause.get("heading") or "Unnumbered clause",
+                "page": clause.get("page"),
+                "text": clause.get("text", ""),
+            }
+            for clause in clauses
+        ]
+        prompt = f'''Review the supplied contract clauses and identify the three most important non-obvious contractual or compliance risks, if the text supports three. Return fewer when fewer are supported; never invent a risk just to reach three. Do not perform legal research and do not include laws, cases, statute names, or citations. Return only JSON matching SimpleRiskScan. For each finding provide: a concise issue title; severity; every clause ID materially involved; one exact verbatim quotation from each cited clause (do not rewrite the quotation); why the interaction or wording may be easy to miss; and one practical suggested action. A cross-clause risk must list every involved clause ID and include a separate exact quote from each. Do not state that a law was violated, that a party is compliant, or give a final legal conclusion. Use conditional language (may/could). If fewer than three risks are supported, explain why in warnings. Jurisdiction context: {json.dumps(state.get('jurisdiction', {}), ensure_ascii=False)}\nClauses: {json.dumps(clause_rows, ensure_ascii=False)}'''
+        scan = await self._call(prompt, SimpleRiskScan)
+        converted = [
+            RiskFinding(
+                risk_id=f"R{index}",
+                title=item.title,
+                severity=item.severity,
+                clause_ids=item.clause_ids,
+                exact_quotes=item.exact_quotes,
+                why_non_obvious=item.why_non_obvious,
+                jurisdiction_assumption="Applicability depends on the contract context and relevant facts.",
+                suggested_mitigation_clause=item.suggested_action,
+                search_queries=[],
+            )
+            for index, item in enumerate(scan.risks[:3], 1)
+        ]
+        single = RiskScan(risks=[item for item in converted if len(item.clause_ids) == 1])
+        cross = RiskScan(risks=[item for item in converted if len(item.clause_ids) > 1])
+        grounded_by_id = {
+            item.risk_id: item
+            for item in (
+                self._ground_risks(single, state, cross_clause=False)
+                + self._ground_risks(cross, state, cross_clause=True)
+            )
+        }
+        grounded = [grounded_by_id[item.risk_id] for item in converted if item.risk_id in grounded_by_id]
+        state["risks"] = [item.model_dump() for item in grounded]
+        state.setdefault("warnings", []).extend(scan.warnings)
+        if len(grounded) < 3:
+            state.setdefault("warnings", []).append(
+                f"Only {len(grounded)} risk(s) passed exact-quote and clause checks; no additional risks were invented."
+            )
+        return state
+
     async def cross_clause_scan(self, state: GraphState) -> GraphState:
         await self._event(state, "cross_clause_scan", "Checking definitions and clause interactions")
         clauses = state.get("clauses", [])
@@ -814,6 +866,47 @@ class LegalWorkflow:
         support_token = self._support_check_records.set([])
         try:
             return await self.graph.ainvoke(initial)
+        finally:
+            self._model_call_records.reset(token)
+            self._support_check_records.reset(support_token)
+
+    async def run_risk_review(self, initial: GraphState):
+        """Run only ingestion, segmentation, jurisdiction scan, and one risk call."""
+        if not self.model_call and not (self.gemini or self.groq):
+            raise RuntimeError(f"{self.provider.upper()} API key is not configured")
+        token = self._model_call_records.set([])
+        support_token = self._support_check_records.set([])
+        try:
+            state = initial
+            for node in (self.ingest, self.segment, self.detect_jurisdiction, self.simple_risk_scan):
+                state = await node(state)
+            clause_by_id = {str(item.get("id")): item for item in state.get("clauses", [])}
+            risks = []
+            for risk in state.get("risks", [])[:3]:
+                clause_refs = [
+                    {
+                        "id": clause_id,
+                        "section": clause_by_id.get(clause_id, {}).get("heading") or clause_id,
+                        "page": clause_by_id.get(clause_id, {}).get("page"),
+                    }
+                    for clause_id in risk.get("clause_ids", [])
+                ]
+                risks.append({
+                    "risk_id": risk["risk_id"],
+                    "title": risk["title"],
+                    "severity": risk["severity"],
+                    "clause_refs": clause_refs,
+                    "exact_quotes": risk["exact_quotes"],
+                    "why_non_obvious": risk["why_non_obvious"],
+                    "suggested_action": risk["suggested_mitigation_clause"],
+                })
+            result = {
+                "document_name": state.get("filename", "document"),
+                "risks": risks,
+                "warnings": list(dict.fromkeys(state.get("warnings", []))),
+                "notice": "Potential contract issues only; not legal advice.",
+            }
+            return {"risk_review": result}
         finally:
             self._model_call_records.reset(token)
             self._support_check_records.reset(support_token)

@@ -1,4 +1,4 @@
-from app.agents.risk_models import DraftMemo, RiskFinding, RiskScan, VisionExtraction
+from app.agents.risk_models import DraftMemo, RiskFinding, RiskScan, SimpleRiskFinding, SimpleRiskScan, VisionExtraction
 from app.agents.workflow import LegalWorkflow, _source_grounded_claims
 from app.config import settings
 from app.ingestion.models import ParsedDocument
@@ -100,6 +100,49 @@ def test_fake_model_and_resolver_produce_quote_grounded_cross_clause_memo():
         call["model"] == (expected_support_model if call["result_schema"] == "SupportVerdict" else settings.active_model)
         for call in memo["analysis_metadata"]["model_calls"]
     )
+
+
+def test_simple_risk_scan_uses_one_call_and_keeps_only_verbatim_findings():
+    calls = []
+    clauses = [
+        {"id": "C1", "heading": "Liability cap", "text": "Each party's aggregate liability is capped at fees paid in the prior twelve months.", "page": 1},
+        {"id": "C2", "heading": "Indemnity", "text": "Supplier's indemnity obligations are unlimited and not subject to the cap in Section 1.", "page": 1},
+        {"id": "C3", "heading": "Renewal", "text": "The agreement renews automatically for one year unless notice is given 90 days before expiry.", "page": 2},
+        {"id": "C4", "heading": "Termination", "text": "Supplier may terminate for any breach without a cure period.", "page": 3},
+    ]
+
+    async def model(prompt, schema, _model_name):
+        calls.append((prompt, schema))
+        return SimpleRiskScan(risks=[
+            SimpleRiskFinding(risk_id="x", title="Indemnity may bypass the cap", severity="high", clause_ids=["C1", "C2"], exact_quotes=[clauses[0]["text"], clauses[1]["text"]], why_non_obvious="The cap and indemnity provisions may have different scopes.", suggested_action="State whether the liability cap also applies to indemnity."),
+            SimpleRiskFinding(risk_id="y", title="Renewal and notice timing may constrain exit", severity="medium", clause_ids=["C3"], exact_quotes=[clauses[2]["text"]], why_non_obvious="The renewal window may pass unnoticed.", suggested_action="Shorten the notice period."),
+            SimpleRiskFinding(risk_id="z", title="No cure period may allow immediate termination", severity="high", clause_ids=["C4"], exact_quotes=[clauses[3]["text"]], why_non_obvious="Any breach triggers termination.", suggested_action="Add notice and a cure period."),
+        ])
+
+    workflow = LegalWorkflow(model_call=model, resolver=FakeResolver())
+    state = {"clauses": clauses, "jurisdiction": {}, "warnings": []}
+    result = run_inline(workflow.simple_risk_scan(state))
+
+    assert len(calls) == 1
+    assert calls[0][1] is SimpleRiskScan
+    assert len(result["risks"]) == 3
+    assert all(quote in " ".join(item["text"] for item in clauses) for risk in result["risks"] for quote in risk["exact_quotes"])
+
+
+def test_simple_risk_scan_drops_unverifiable_quote_instead_of_filling_three():
+    clause = {"id": "C1", "heading": "Payment", "text": "Customer pays invoices within thirty days.", "page": 1}
+
+    async def model(_prompt, _schema, _model_name):
+        return SimpleRiskScan(risks=[SimpleRiskFinding(
+            risk_id="invented", title="Unsupported risk", severity="high", clause_ids=["C1"],
+            exact_quotes=["Customer must pay within one day."], why_non_obvious="Unsupported.", suggested_action="Review.",
+        )])
+
+    workflow = LegalWorkflow(model_call=model, resolver=FakeResolver())
+    result = run_inline(workflow.simple_risk_scan({"clauses": [clause], "jurisdiction": {}, "warnings": []}))
+
+    assert result["risks"] == []
+    assert any("no additional risks were invented" in item for item in result["warnings"])
 
 
 def test_unverbatim_risk_quote_is_dropped():

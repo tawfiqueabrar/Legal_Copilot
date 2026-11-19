@@ -1,5 +1,6 @@
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import Response
+from typing import Literal
 from app.api.routes import _session_stream, store, upload
 from app.services.memo_export import memo_to_docx, memo_to_pdf
 
@@ -12,11 +13,11 @@ async def create_session(file: UploadFile = File(...)):
 
 
 @router.post("/{session_id}/analyze")
-async def analyze_session(session_id: str):
+async def analyze_session(session_id: str, mode: Literal["risks", "full"] = "risks"):
     session = await store.get(session_id)
     if not session:
         raise HTTPException(404, "Session expired or not found.")
-    return await _session_stream(session)
+    return await _session_stream(session, mode=mode)
 
 
 @router.get("/{session_id}/memo")

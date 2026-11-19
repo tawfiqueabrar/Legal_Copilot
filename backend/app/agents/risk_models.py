@@ -41,6 +41,23 @@ class RiskScan(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class SimpleRiskFinding(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    risk_id: str
+    title: str
+    severity: Literal["critical", "high", "medium", "low"]
+    clause_ids: list[str] = Field(min_length=1)
+    exact_quotes: list[str] = Field(min_length=1)
+    why_non_obvious: str
+    suggested_action: str
+
+
+class SimpleRiskScan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    risks: list[SimpleRiskFinding] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
 class DraftMemo(BaseModel):
     model_config = ConfigDict(extra="forbid")
     title: str = "Legal Memorandum"
@@ -123,4 +140,4 @@ class FinalMemo(BaseModel):
     analysis_metadata: dict = Field(default_factory=dict)
 
 
-__all__ = ["JurisdictionFinding", "VisionExtraction", "RiskFinding", "RiskScan", "DraftMemo", "MemoRisk", "FinalMemo", "SupportVerdict"]
+__all__ = ["JurisdictionFinding", "VisionExtraction", "RiskFinding", "RiskScan", "SimpleRiskFinding", "SimpleRiskScan", "DraftMemo", "MemoRisk", "FinalMemo", "SupportVerdict"]

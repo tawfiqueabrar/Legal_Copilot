@@ -26,12 +26,13 @@ async def upload(file: UploadFile = File(...)):
     return {"session_id": session.id, "filename": session.filename, "expires_in_seconds": settings.session_ttl_seconds}
 
 
-async def _run(session):
+async def _run(session, mode: str = "full"):
     try:
         parsed = await asyncio.to_thread(ingest_document, session.content, session.content_type, session.filename)
         await session.events.put({"event": "progress", "data": {"stage": "extract", "message": "Document received in volatile session memory"}})
-        result = await workflow.run({"session_id": session.id, "filename": session.filename, "mime_type": session.content_type, "document_text": parsed.text, "page_texts": parsed.page_texts, "parsed_document": parsed.model_dump(), "document_bytes": session.content, "event_queue": session.events, "progress": [], "errors": []})
-        session.result = result.get("memo")
+        initial = {"session_id": session.id, "filename": session.filename, "mime_type": session.content_type, "document_text": parsed.text, "page_texts": parsed.page_texts, "parsed_document": parsed.model_dump(), "document_bytes": session.content, "event_queue": session.events, "progress": [], "errors": []}
+        result = await (workflow.run_risk_review(initial) if mode == "risks" else workflow.run(initial))
+        session.result = result.get("risk_review") if mode == "risks" else result.get("memo")
         if session.result is None:
             raise RuntimeError("Workflow completed without a memo")
         await session.events.put({"event": "result", "data": session.result or {"error": "Memo generation failed", "errors": result.get("errors", [])}})
@@ -49,14 +50,14 @@ async def _run(session):
         await session.events.put(None)
 
 
-def _start_analysis(session):
+def _start_analysis(session, mode: str = "full"):
     if not session.started:
         session.started = True
         session.running = True
-        session.task = asyncio.create_task(_run(session))
+        session.task = asyncio.create_task(_run(session, mode))
 
 
-async def _session_stream(session):
+async def _session_stream(session, mode: str = "full"):
     async def stream():
         if session.result is not None:
             yield f"event: result\ndata: {json.dumps(session.result)}\n\n"
@@ -67,7 +68,7 @@ async def _session_stream(session):
         if session.analysis_done and session.result is None:
             yield f"event: error\ndata: {json.dumps({'message': 'Analysis failed; no memo is available.'})}\n\n"
             return
-        _start_analysis(session)
+        _start_analysis(session, mode)
         while True:
             try:
                 item = await asyncio.wait_for(session.events.get(), timeout=15)
